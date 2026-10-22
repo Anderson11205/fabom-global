@@ -73,3 +73,23 @@ Stage Summary:
 - Site is 100% self-contained: no z.ai, no external requests, offline-safe once loaded
 - Repo push-ready on main; awaiting user's GitHub repo URL + PAT (or self-push) then Vercel import
 - User still needs: WEB3FORMS_ACCESS_KEY in Vercel env for form-to-Gmail inbox delivery
+
+---
+Task ID: 4
+Agent: main (Z.ai)
+Task: Fix mobile cutting/overlap from user screenshots + make mockups more real + repeat GitHub/Vercel steps
+
+Work Log:
+- New ScaledMock client component: renders each mock at fixed 680px design width, ResizeObserver scales to container, aspect-ratio crop at 380dp + soft bottom fade -> card previews are complete proportional thumbnails, no wrap/squeeze/cut text on any screen
+- Portfolio ProjectCard preview uses ScaledMock; case-study dialog previews stack on mobile (flex-col sm:flex-row)
+- Hero: phone preview moved BELOW desktop preview (in-flow, right-aligned) on ALL sizes — nothing covered anymore (user complaint: phone mock covered Service Two column)
+- Apex Motors: empty icon box replaced with featured-vehicle card (GT Coupe $41,900, 2022-38k miles chip, 450hp/3.4s/RWD chips, free history report row); inventory cards got car visuals + road line; nav hidden @<384px
+- Urban Essentials: 4 product images now have real icons (backpack/coffee/shirt/notebook) + NEW badge + "2,400+ orders delivered" + returns strip
+- All 8 desktop-mock navs: whitespace-nowrap + hidden @sm:flex (container queries via @container on MockBrowser) -> no more "Trade- in" style wraps in dialog
+- globals.css: color-scheme: light only + white bg + prefers-color-scheme dark guard (phone force-dark defense)
+- Build passes; zero console errors; zero horizontal overflow at 360/390/768/1366; mobile hero/cards/dialog/Apex verified via screenshots (download/qa-screens/fix-*.png)
+- Committed to main
+
+Stage Summary:
+- All user-reported cutting/covering fixed and verified
+- Awaiting: GitHub repo URL + PAT (push), Vercel signup, optional Web3Forms key for inbox delivery
