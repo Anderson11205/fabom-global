@@ -42,6 +42,47 @@ type SubmitState =
   | { status: "success"; reference: string }
   | { status: "error"; message: string };
 
+/**
+ * Web3Forms access key (safe to expose client-side — it can only be used to
+ * deliver messages to the business inbox, which is the whole point). The
+ * free plan requires the submission to come from the visitor's browser,
+ * so this fetch happens directly in the client.
+ */
+const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? "";
+
+async function submitToWeb3Forms(
+  values: ContactFormValues,
+  reference: string
+): Promise<boolean> {
+  if (!WEB3FORMS_KEY) return false;
+  try {
+    const res = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        subject: `New website enquiry — ${values.businessName} (#${reference.slice(-8).toUpperCase()})`,
+        from_name: "FABOM GLOBAL Website",
+        full_name: values.fullName,
+        email: values.email,
+        business_name: values.businessName,
+        current_website: values.currentWebsite || "—",
+        business_type: values.businessType,
+        service_required: values.serviceRequired,
+        estimated_budget: values.estimatedBudget || "—",
+        preferred_timeline: values.preferredTimeline || "—",
+        message: values.projectDescription,
+        reference,
+        botcheck: "",
+      }),
+    });
+    const data = (await res.json().catch(() => null)) as { success?: boolean } | null;
+    return res.ok && data?.success === true;
+  } catch {
+    return false;
+  }
+}
+
 function ContactMethods() {
   return (
     <div className="space-y-4">
@@ -139,13 +180,36 @@ export function ContactSection() {
 
   async function onSubmit(values: ContactFormValues) {
     setSubmitState({ status: "sending" });
+    const reference = `web-${Date.now().toString(36)}${Math.random()
+      .toString(36)
+      .slice(2, 8)}`;
+
+    // Primary path: deliver straight from the visitor's browser via Web3Forms
+    // (the free plan requires this — server-to-server calls are refused).
+    const delivered = await submitToWeb3Forms(values, reference);
+
+    if (delivered) {
+      setSubmitState({ status: "success", reference });
+      form.reset(CONTACT_FORM_DEFAULTS);
+      toast({
+        title: "Enquiry sent",
+        description: "Thank you — your project enquiry has been received.",
+      });
+      return;
+    }
+
+    // Fallback path: hand the enquiry to our own API (server-side provider).
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      const data = (await res.json()) as { ok?: boolean; reference?: string; message?: string };
+      const data = (await res.json()) as {
+        ok?: boolean;
+        reference?: string;
+        message?: string;
+      };
 
       if (!res.ok || !data.ok) {
         throw new Error(
@@ -153,7 +217,7 @@ export function ContactSection() {
         );
       }
 
-      setSubmitState({ status: "success", reference: data.reference ?? "" });
+      setSubmitState({ status: "success", reference: data.reference ?? reference });
       form.reset(CONTACT_FORM_DEFAULTS);
       toast({
         title: "Enquiry sent",

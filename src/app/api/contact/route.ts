@@ -23,12 +23,10 @@ function isRateLimited(ip: string): boolean {
 }
 
 /* ── Enquiry delivery ──────────────────────────────────────────────────────
- * Every enquiry is emailed to the business inbox. Two providers are
- * supported (first one configured wins):
- *
- *  1. Web3Forms  — simplest. Create a free access key at web3forms.com with
- *     the business email, set WEB3FORMS_ACCESS_KEY. Done.
- *  2. Resend     — set RESEND_API_KEY (see README → email delivery).
+ * Web3Forms (the primary provider) is submitted directly from the visitor's
+ * browser — its free plan refuses server-to-server calls. This API route is
+ * the fallback layer: when a Resend API key is configured (RESEND_API_KEY),
+ * enquiries that did not reach Web3Forms are emailed through Resend instead.
  *
  * When a database is configured (DATABASE_URL), submissions are also stored
  * as a backup copy.
@@ -48,37 +46,6 @@ type EnquiryInput = {
 };
 
 type Delivery = "sent" | "failed" | "skipped";
-
-async function sendViaWeb3Forms(input: EnquiryInput): Promise<Delivery> {
-  const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
-  if (!accessKey) return "skipped";
-
-  try {
-    const res = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        access_key: accessKey,
-        subject: `New website enquiry — ${input.businessName} (#${input.reference.slice(-8).toUpperCase()})`,
-        from_name: "FABOM GLOBAL Website",
-        full_name: input.fullName,
-        email: input.email,
-        business_name: input.businessName,
-        current_website: input.currentWebsite || "—",
-        business_type: input.businessType,
-        service_required: input.serviceRequired,
-        estimated_budget: input.estimatedBudget || "—",
-        preferred_timeline: input.preferredTimeline || "—",
-        message: input.projectDescription,
-        reference: input.reference,
-      }),
-    });
-    const data = (await res.json().catch(() => null)) as { success?: boolean } | null;
-    return res.ok && data?.success === true ? "sent" : "failed";
-  } catch {
-    return "failed";
-  }
-}
 
 async function sendViaResend(input: EnquiryInput): Promise<Delivery> {
   const apiKey = process.env.RESEND_API_KEY;
@@ -140,14 +107,8 @@ async function sendViaResend(input: EnquiryInput): Promise<Delivery> {
 }
 
 async function emailEnquiry(input: EnquiryInput): Promise<Delivery> {
-  // Web3Forms first (simplest setup), Resend as the alternative.
-  const web3forms = await sendViaWeb3Forms(input);
-  if (web3forms !== "skipped") return web3forms;
-
   const resend = await sendViaResend(input);
-  if (resend !== "skipped") return resend;
-
-  return "skipped";
+  return resend;
 }
 
 /* ── Optional database backup copy ──────────────────────────────────────── */
