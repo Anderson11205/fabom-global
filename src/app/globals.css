@@ -152,3 +152,15 @@
     text-wrap: balance;
   }
 }
+
+/* WhatsApp chooser panel pop-in (respects reduced motion via motion-reduce) */
+@keyframes wa-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

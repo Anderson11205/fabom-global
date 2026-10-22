@@ -14,6 +14,10 @@ export const SITE = {
   tagline: "Website Design & Development",
   email: "emmanuelfabom121@gmail.com",
   whatsappDisplay: "0903 659 3139",
+  /** Full international number, digits only — used to build chat deep-links. */
+  whatsappNumber: "2349036593139",
+  /** Prefilled message used when a visitor opens a WhatsApp chat. */
+  whatsappMessage: "Hello FABOM GLOBAL, I'd like to discuss a website project.",
   whatsappLink:
     "https://wa.me/2349036593139?text=Hello%20FABOM%20GLOBAL%2C%20I%27d%20like%20to%20discuss%20a%20website%20project.",
   whatsappPlainLink: "https://wa.me/2349036593139",

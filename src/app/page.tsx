@@ -9,6 +9,7 @@ import { Testimonials } from "@/components/site/testimonials";
 import { FAQ } from "@/components/site/faq";
 import { ContactSection } from "@/components/site/contact-section";
 import { Footer } from "@/components/site/footer";
+import { WhatsAppFloat } from "@/components/site/whatsapp-float";
 
 /**
  * FABOM GLOBAL — single-page experience.
@@ -31,6 +32,7 @@ export default function Home() {
         <ContactSection />
       </main>
       <Footer />
+      <WhatsAppFloat />
     </>
   );
 }

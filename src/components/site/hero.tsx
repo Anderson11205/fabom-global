@@ -44,7 +44,15 @@ function HeroShowcase() {
               for customers to reach you.
             </span>
             <div className="flex gap-2 pt-0.5">
-              <MockButton className="bg-white text-navy">Book Now</MockButton>
+              {/* Real link: tapping the mock's "Book Now" opens the WhatsApp chat */}
+              <a
+                href={SITE.whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block rounded-[2px] bg-white px-2 py-[3px] text-[6.5px] font-semibold tracking-wide text-navy transition-colors hover:bg-gold"
+              >
+                Book Now
+              </a>
               <MockButton tone="light">Learn More</MockButton>
             </div>
             <span className="absolute right-4 top-6 hidden h-12 w-16 border border-gold/40 sm:block">

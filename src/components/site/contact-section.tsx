@@ -69,7 +69,7 @@ function ContactMethods() {
         href={SITE.whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-start gap-4 border border-line bg-white p-5 transition-colors hover:border-gold"
+        className="flex items-start gap-4 border border-line bg-white p-5 transition-colors hover:border-[#1faa53]"
       >
         <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#1faa53] text-white">
           <WhatsAppIcon className="h-5 w-5" aria-hidden="true" />
@@ -180,16 +180,34 @@ export function ContactSection() {
     <section id="contact" className="bg-mist py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-5 lg:px-8">
         <Reveal>
-          <p className="section-label">Contact</p>
-          <div className="mt-5 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <h2 className="max-w-xl font-display text-3xl font-bold leading-tight text-navy md:text-[2.75rem]">
-              Tell me about your project
-            </h2>
-            <p className="max-w-md text-[15px] leading-relaxed text-steel">
-              Fill in the enquiry form below and it will reach me directly, or
-              message me on WhatsApp if you prefer to chat first. The more you
-              share, the more useful my first reply will be.
+          <div className="relative overflow-hidden bg-navy px-6 py-10 text-white shadow-[0_30px_70px_-40px_rgba(13,26,44,0.55)] md:px-12 md:py-14">
+            <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-gold">
+              Enquiries
             </p>
+            <h2 className="mt-4 max-w-2xl font-display text-3xl font-bold leading-[1.12] md:text-[2.75rem]">
+              Ready to give your business the website it{" "}
+              <em className="not-italic text-gold">deserves?</em>
+            </h2>
+            <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/70">
+              Send the enquiry below and it lands directly in my inbox — read
+              personally and answered properly. Prefer to chat first? Message
+              me on WhatsApp, or tap the green bubble in the corner of this
+              page.
+            </p>
+            <ul className="mt-7 flex flex-wrap gap-x-8 gap-y-3 text-[13px] font-semibold text-white/85">
+              <li className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 bg-gold" aria-hidden="true" />
+                Fast, personal replies
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 bg-gold" aria-hidden="true" />
+                Clear, itemised quote
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 bg-gold" aria-hidden="true" />
+                No obligation
+              </li>
+            </ul>
           </div>
         </Reveal>
 
@@ -199,7 +217,15 @@ export function ContactSection() {
           </Reveal>
 
           <Reveal delay={0.14}>
-            <div className="border border-line bg-white p-6 md:p-9">
+            <div className="border border-line border-t-4 border-t-gold bg-white p-6 shadow-[0_28px_60px_-36px_rgba(13,26,44,0.4)] md:p-9">
+              <div className="mb-7 flex items-center justify-between gap-4 border-b border-line pb-5">
+                <h3 className="font-display text-xl font-bold text-navy">
+                  Project enquiry
+                </h3>
+                <span className="text-[12px] font-medium text-steel">
+                  Takes about two minutes
+                </span>
+              </div>
               {submitState.status === "success" ? (
                 <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
                   <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold-tint">
@@ -508,13 +534,13 @@ export function ContactSection() {
                       <Button
                         type="submit"
                         disabled={submitState.status === "sending"}
-                        className="h-12 flex-1 gap-2 rounded-[2px] bg-navy text-sm font-semibold text-white hover:bg-navy-soft disabled:opacity-60 sm:flex-none sm:px-8"
+                        className="h-12 flex-1 gap-2 rounded-[2px] bg-gold text-sm font-semibold text-navy hover:bg-[#b3905a] disabled:opacity-60 sm:flex-none sm:px-8"
                       >
                         {submitState.status === "sending" ? (
                           <>
                             <span
                               aria-hidden="true"
-                              className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                              className="h-4 w-4 animate-spin rounded-full border-2 border-navy/30 border-t-navy"
                             />
                             Sending…
                           </>
