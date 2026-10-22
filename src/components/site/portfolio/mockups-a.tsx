@@ -11,10 +11,10 @@ export function MeridianDesktop() {
           Meridian<span className="text-gold">.</span>
         </span>
         <div className="flex items-center gap-3">
-          <span className="flex gap-2.5 text-[6.5px] font-medium text-steel">
+          <span className="hidden whitespace-nowrap gap-2.5 text-[6.5px] font-medium text-steel @sm:flex">
             <span>Services</span><span>Insights</span><span>About</span><span>Careers</span>
           </span>
-          <MockButton>Contact</MockButton>
+          <MockButton className="whitespace-nowrap">Contact</MockButton>
         </div>
       </div>
       <div className="bg-navy px-4 py-7 text-white">
@@ -105,10 +105,10 @@ export function HavenDesktop() {
       <div className="flex items-center justify-between px-4 py-2.5">
         <span className="font-display text-[10px] font-bold tracking-tight">Haven &amp; Co</span>
         <div className="flex items-center gap-3">
-          <span className="flex gap-2.5 text-[6.5px] font-medium opacity-70">
+          <span className="hidden whitespace-nowrap gap-2.5 text-[6.5px] font-medium opacity-70 @sm:flex">
             <span>Buy</span><span>Rent</span><span>Sell</span><span>Agents</span>
           </span>
-          <MockButton className="bg-[#22392b] text-[#f7f4ee]">Book a viewing</MockButton>
+          <MockButton className="whitespace-nowrap bg-[#22392b] text-[#f7f4ee]">Book a viewing</MockButton>
         </div>
       </div>
       <div className="px-4 pb-4 pt-1">
@@ -179,12 +179,12 @@ export function ApexDesktop() {
   return (
     <div className="bg-[#14181d] text-white">
       <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5">
-        <span className="font-display text-[10px] font-bold tracking-[0.08em]">APEX MOTORS</span>
+        <span className="whitespace-nowrap font-display text-[10px] font-bold tracking-[0.08em]">APEX MOTORS</span>
         <div className="flex items-center gap-3">
-          <span className="flex gap-2.5 text-[6.5px] font-medium text-white/60">
+          <span className="hidden whitespace-nowrap gap-2.5 text-[6.5px] font-medium text-white/60 @sm:flex">
             <span>Inventory</span><span>Finance</span><span>Trade-in</span><span>Contact</span>
           </span>
-          <MockButton className="bg-[#d9a441] text-[#14181d]">Book test drive</MockButton>
+          <MockButton className="whitespace-nowrap bg-[#d9a441] text-[#14181d]">Book test drive</MockButton>
         </div>
       </div>
       <div className="flex items-center gap-4 px-4 py-6">
@@ -204,7 +204,31 @@ export function ApexDesktop() {
             <MockButton tone="light">Value my trade</MockButton>
           </div>
         </div>
-        <MockImage icon={<Car className="h-7 w-7 text-[#d9a441]/70" />} className="h-20 w-28 shrink-0 rounded-[3px] bg-[#20262e]" />
+        {/* Featured vehicle — a realistic dealership hero card */}
+        <div className="w-[172px] shrink-0 rounded-[3px] border border-white/10 bg-[#1a2029] p-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[5px] font-semibold uppercase tracking-[0.2em] text-[#d9a441]">Featured</span>
+            <span className="rounded-[2px] bg-white/[0.07] px-1.5 py-[1px] text-[4.5px] font-medium text-white/70">2022 · 38k miles</span>
+          </div>
+          <div className="relative mt-1.5 h-[52px] overflow-hidden rounded-[2px] bg-gradient-to-b from-[#232b35] to-[#1c232c]">
+            <Car className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-[60%] text-[#d9a441]/80" />
+            <span className="absolute inset-x-2 bottom-[9px] h-[2px] rounded-full bg-white/10" />
+            <span className="absolute inset-x-4 bottom-[5px] h-[1px] rounded-full bg-white/[0.06]" />
+          </div>
+          <div className="mt-1.5 flex items-center justify-between">
+            <span className="text-[7px] font-bold">GT Coupe</span>
+            <span className="text-[7px] font-bold text-[#d9a441]">$41,900</span>
+          </div>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {["450 hp", "3.4s 0–60", "RWD"].map((s) => (
+              <span key={s} className="rounded-[2px] bg-white/[0.07] px-1.5 py-[2px] text-[4.5px] text-white/70">{s}</span>
+            ))}
+          </div>
+          <div className="mt-1.5 flex items-center justify-between border-t border-white/10 pt-1.5">
+            <span className="text-[5px] text-white/55">Free history report</span>
+            <span className="text-[5px] font-semibold text-[#d9a441]">View details →</span>
+          </div>
+        </div>
       </div>
       <div className="grid grid-cols-3 gap-2.5 px-4 pb-4">
         {[
@@ -213,7 +237,10 @@ export function ApexDesktop() {
           { name: "Roadster S", price: "$47,200", specs: ["385 hp", "4.0s", "Soft-top"] },
         ].map((c) => (
           <div key={c.name} className="border border-white/10 bg-[#1a2029]">
-            <MockImage className="h-10 w-full bg-[#232b35]" />
+            <div className="relative h-10 w-full overflow-hidden bg-gradient-to-b from-[#242c36] to-[#1e252e]">
+              <Car className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-[62%] text-[#d9a441]/60" />
+              <span className="absolute inset-x-1.5 bottom-[6px] h-[1.5px] rounded-full bg-white/10" />
+            </div>
             <div className="p-2">
               <div className="flex items-center justify-between">
                 <span className="text-[7px] font-semibold">{c.name}</span>

@@ -77,8 +77,9 @@ function HeroShowcase() {
         </div>
       </MockBrowser>
 
-      {/* Phone preview */}
-      <MockPhone className="absolute -bottom-7 -right-2 z-20 w-[96px] sm:-right-5 sm:w-[116px]">
+      {/* Phone preview — sits below the desktop preview so it never covers
+          or cuts any content, on phones and laptops alike. */}
+      <MockPhone className="relative z-20 ml-auto mr-2 mt-3 w-[150px] sm:mr-6 sm:w-[160px]">
         <div className="bg-navy px-2.5 pb-3 pt-2 text-white">
           <div className="flex items-center justify-between">
             <span className="font-display text-[7px] font-bold">Your Business</span>

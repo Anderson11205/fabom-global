@@ -1,4 +1,4 @@
-import { Star, ShoppingBag, Search, Heart, Sparkles, BookOpen } from "lucide-react";
+import { Star, ShoppingBag, Search, Heart, Sparkles, BookOpen, Backpack, Coffee, Shirt, NotebookPen, Truck, RotateCcw } from "lucide-react";
 import { MockButton, MockImage } from "./mockup-primitives";
 
 /* ══════════════════ 5 · STERLING & GRANT — LAW ══════════════════ */
@@ -9,10 +9,10 @@ export function SterlingDesktop() {
       <div className="flex items-center justify-between border-b border-[#1e3328]/10 px-4 py-2.5">
         <span className="font-display text-[10px] font-bold tracking-tight">Sterling &amp; Grant</span>
         <div className="flex items-center gap-3">
-          <span className="flex gap-2.5 text-[6.5px] font-medium opacity-70">
+          <span className="hidden whitespace-nowrap gap-2.5 text-[6.5px] font-medium opacity-70 @sm:flex">
             <span>Practice areas</span><span>Attorneys</span><span>Our process</span><span>Contact</span>
           </span>
-          <MockButton className="bg-[#1e3328] text-[#fbf9f4]">Request consultation</MockButton>
+          <MockButton className="whitespace-nowrap bg-[#1e3328] text-[#fbf9f4]">Request consultation</MockButton>
         </div>
       </div>
       <div className="flex items-center gap-4 px-4 py-6">
@@ -97,10 +97,10 @@ export function LumiereDesktop() {
       <div className="flex items-center justify-between px-4 py-2.5">
         <span className="font-display text-[10px] font-bold tracking-tight text-[#c98a94]">Lumière</span>
         <div className="flex items-center gap-3">
-          <span className="flex gap-2.5 text-[6.5px] font-medium opacity-70">
+          <span className="hidden whitespace-nowrap gap-2.5 text-[6.5px] font-medium opacity-70 @sm:flex">
             <span>Services</span><span>Our team</span><span>Gallery</span><span>Gift cards</span>
           </span>
-          <MockButton className="bg-[#c98a94] text-white">Book now</MockButton>
+          <MockButton className="whitespace-nowrap bg-[#c98a94] text-white">Book now</MockButton>
         </div>
       </div>
       <div className="flex items-stretch gap-4 px-4 py-5">
@@ -177,10 +177,10 @@ export function AtelierDesktop() {
       <div className="flex items-center justify-between border-b border-black/10 px-4 py-2.5">
         <span className="text-[9px] font-bold uppercase tracking-[0.28em]">Atelier Noir</span>
         <div className="flex items-center gap-3">
-          <span className="flex gap-2.5 text-[6.5px] font-medium uppercase tracking-[0.14em] opacity-60">
+          <span className="hidden whitespace-nowrap gap-2.5 text-[6.5px] font-medium uppercase tracking-[0.14em] opacity-60 @sm:flex">
             <span>Lookbook</span><span>Shop</span><span>Atelier</span><span>Stockists</span>
           </span>
-          <span className="flex items-center gap-1.5 text-[7px] font-semibold">
+          <span className="flex whitespace-nowrap items-center gap-1.5 text-[7px] font-semibold">
             <ShoppingBag className="h-2.5 w-2.5" /> Bag (0)
           </span>
         </div>
@@ -238,13 +238,13 @@ export function UrbanDesktop() {
       <div className="flex items-center justify-between border-b border-black/[0.07] px-4 py-2.5">
         <span className="text-[9px] font-bold tracking-tight">Urban Essentials</span>
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 rounded-full border border-black/10 px-2 py-[3px] text-[6px] text-steel">
+          <span className="hidden @sm:flex items-center gap-1.5 whitespace-nowrap rounded-full border border-black/10 px-2 py-[3px] text-[6px] text-steel">
             <Search className="h-2 w-2" /> Search products
           </span>
-          <span className="flex items-center gap-1 text-[6.5px] font-semibold">
+          <span className="hidden @sm:flex items-center gap-1 whitespace-nowrap text-[6.5px] font-semibold">
             <Heart className="h-2.5 w-2.5" /> Saved
           </span>
-          <span className="relative flex items-center gap-1 text-[6.5px] font-semibold">
+          <span className="relative flex items-center gap-1 whitespace-nowrap text-[6.5px] font-semibold">
             <ShoppingBag className="h-2.5 w-2.5" /> Cart
             <span className="absolute -right-2 -top-1.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-[#4a6070] text-[4.5px] text-white">2</span>
           </span>
@@ -265,33 +265,47 @@ export function UrbanDesktop() {
         ))}
       </div>
       <div className="bg-[#f2f5f7] px-4 py-3">
-        <span className="block max-w-[26ch] font-display text-[13px] font-bold leading-[1.2]">
-          Everyday goods, honestly priced
-        </span>
+        <div className="flex items-end justify-between">
+          <span className="block max-w-[26ch] font-display text-[13px] font-bold leading-[1.2]">
+            Everyday goods, honestly priced
+          </span>
+          <span className="hidden whitespace-nowrap items-center gap-1 text-[5.5px] font-semibold text-[#4a6070] @sm:flex">
+            <Truck className="h-2.5 w-2.5" /> 2,400+ orders delivered
+          </span>
+        </div>
         <span className="mt-1 block text-[6px] text-steel">Free delivery over $40 · 30-day returns</span>
       </div>
       <div className="grid grid-cols-4 gap-2 px-4 py-3">
         {[
-          { n: "Canvas weekender", p: "$68", r: "4.8" },
-          { n: "Ceramic pour-over", p: "$24", r: "4.9" },
-          { n: "Merino crew", p: "$52", r: "4.7" },
-          { n: "Field notebook", p: "$12", r: "4.8" },
-        ].map((p) => (
-          <div key={p.n} className="border border-black/[0.07]">
-            <MockImage className="h-12 w-full bg-[#e9edf0]" />
+          { n: "Canvas weekender", p: "$68", r: "4.8", Icon: Backpack },
+          { n: "Ceramic pour-over", p: "$24", r: "4.9", Icon: Coffee },
+          { n: "Merino crew", p: "$52", r: "4.7", Icon: Shirt },
+          { n: "Field notebook", p: "$12", r: "4.8", Icon: NotebookPen },
+        ].map(({ n, p, r, Icon }) => (
+          <div key={n} className="border border-black/[0.07]">
+            <div className="relative flex h-12 w-full items-center justify-center bg-[#e9edf0]">
+              <Icon className="h-5 w-5 text-[#4a6070]/60" />
+              <span className="absolute left-1 top-1 rounded-[2px] bg-white px-1 py-[1px] text-[4px] font-semibold text-[#4a6070]">NEW</span>
+            </div>
             <div className="p-1.5">
-              <span className="block text-[6px] font-semibold leading-tight">{p.n}</span>
+              <span className="block text-[6px] font-semibold leading-tight">{n}</span>
               <span className="mt-0.5 flex items-center gap-1 text-[5.5px]">
-                <Star className="h-1.5 w-1.5 fill-[#d9a441] text-[#d9a441]" /> {p.r}
+                <Star className="h-1.5 w-1.5 fill-[#d9a441] text-[#d9a441]" /> {r}
                 <span className="opacity-50">·</span> In stock
               </span>
               <div className="mt-1 flex items-center justify-between">
-                <span className="text-[6.5px] font-bold">{p.p}</span>
+                <span className="text-[6.5px] font-bold">{p}</span>
                 <span className="rounded-[2px] bg-[#4a6070] px-1.5 py-[2px] text-[5px] font-semibold text-white">Add</span>
               </div>
             </div>
           </div>
         ))}
+      </div>
+      <div className="flex items-center justify-between border-t border-black/[0.07] px-4 py-2.5">
+        <span className="flex items-center gap-1.5 text-[5.5px] text-steel">
+          <RotateCcw className="h-2.5 w-2.5" /> 30-day free returns
+        </span>
+        <span className="text-[5.5px] font-semibold text-[#4a6070]">Shop all products →</span>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ export function MockBrowser({
     <div
       aria-hidden="true"
       className={cn(
-        "overflow-hidden rounded-[4px] border border-black/10 bg-white shadow-[0_18px_44px_-18px_rgba(13,26,44,0.35)]",
+        "@container overflow-hidden rounded-[4px] border border-black/10 bg-white shadow-[0_18px_44px_-18px_rgba(13,26,44,0.35)]",
         className
       )}
     >

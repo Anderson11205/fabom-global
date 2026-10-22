@@ -12,6 +12,7 @@ import {
 import { PROJECTS, type Project } from "@/lib/site-config";
 import { Reveal } from "../reveal";
 import { MockBrowser, MockPhone } from "./mockup-primitives";
+import { ScaledMock } from "./scaled-mock";
 import {
   MeridianDesktop, MeridianMobile,
   HavenDesktop, HavenMobile,
@@ -51,9 +52,13 @@ function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void
           aria-label={`Open case study for ${project.title} (demo concept)`}
           className="relative block w-full cursor-pointer overflow-hidden border-b border-line bg-mist text-left"
         >
-          <span className="pointer-events-none block h-52 overflow-hidden p-4 transition-transform duration-500 ease-out group-hover:scale-[1.015] sm:h-56 md:h-60">
+          <span className="pointer-events-none block p-4 transition-transform duration-500 ease-out group-hover:scale-[1.015]">
             <MockBrowser className="w-full">
-              <mock.Desktop />
+              {/* Rendered at full desktop width, then scaled — nothing is ever
+                  squeezed, wrapped or cut mid-text, on any screen size. */}
+              <ScaledMock designWidth={680} cropHeight={380}>
+                <mock.Desktop />
+              </ScaledMock>
             </MockBrowser>
           </span>
           <span className="absolute right-3 top-3 flex items-center gap-1.5 bg-navy px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
@@ -100,7 +105,7 @@ function CaseStudyBody({ project, onClose }: { project: Project; onClose: () => 
         <MockBrowser>
           <mock.Desktop />
         </MockBrowser>
-        <div className="flex items-start gap-5">
+        <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-start">
           <MockPhone className="w-[130px] shrink-0">
             <mock.Mobile />
           </MockPhone>

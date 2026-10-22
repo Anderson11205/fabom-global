@@ -112,8 +112,17 @@
     scroll-behavior: smooth;
     scroll-padding-top: 5.5rem;
     /* Keep the site in its designed light palette — prevents mobile
-       browsers from force-darkening and distorting the brand colours. */
-    color-scheme: light;
+       browsers from force-darkening and distorting the brand colours.
+       "light only" explicitly rejects any dark scheme. */
+    color-scheme: light only;
+    background-color: #ffffff;
+  }
+  /* Extra guard: even on devices set to dark mode, this site stays light */
+  @media (prefers-color-scheme: dark) {
+    html {
+      color-scheme: light only;
+      background-color: #ffffff;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     html {
