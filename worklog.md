@@ -53,3 +53,23 @@ Stage Summary:
 - All user-reported issues fixed and browser-verified at 6 viewports
 - Form inbox delivery = set WEB3FORMS_ACCESS_KEY in Vercel (README step 3)
 - Repo push-ready: git remote add origin <url> && git push -u origin main
+
+---
+Task ID: 3
+Agent: main (Z.ai)
+Task: Remove "something.com" URL bars completely + verify no z.ai branding / offline behavior + prepare GitHub/Vercel handoff
+
+Work Log:
+- Removed MockBrowser chrome bar + url prop entirely (mockup-primitives.tsx); mockups now clean framed previews
+- Removed url="yourbusiness.com" (hero.tsx) and all 8 fake .example URLs from MOCKUPS map + 2 usages (portfolio.tsx)
+- Verified zero remaining URL-like strings in src (only real email, API endpoints, form placeholder remain)
+- z.ai audit: 0 matches for z.ai/zai/powered-by anywhere in src; favicon is custom FG SVG; 404 branded; OG image self-generated
+- Offline audit: fonts bundled via next/font (woff2 self-hosted), profile image local, zero external CDN/analytics; network log on prod build showed 100% localhost requests
+- Cold load with no network = browser's own error page (universal behavior, nothing shows); loaded page with network cut renders fully styled (verified by screenshot)
+- Production build (next start) verified: no dev-mode "N" indicator, clean render at 1366px
+- next build passes; committed 38473fc; .gitignore extended (scripts/, *.log)
+
+Stage Summary:
+- Site is 100% self-contained: no z.ai, no external requests, offline-safe once loaded
+- Repo push-ready on main; awaiting user's GitHub repo URL + PAT (or self-push) then Vercel import
+- User still needs: WEB3FORMS_ACCESS_KEY in Vercel env for form-to-Gmail inbox delivery
