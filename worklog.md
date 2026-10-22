@@ -93,3 +93,22 @@ Work Log:
 Stage Summary:
 - All user-reported cutting/covering fixed and verified
 - Awaiting: GitHub repo URL + PAT (push), Vercel signup, optional Web3Forms key for inbox delivery
+
+---
+Task ID: 5
+Agent: main (Z.ai)
+Task: GitHub deployment using user's PAT + answer Web3Forms domain question + request Vercel token
+
+Work Log:
+- Verified user's GitHub PAT (classic, repo scope) -> account Anderson11205
+- Created public repo Anderson11205/fabom-global via GitHub API (user had not created it manually)
+- Pushed main branch (HEAD 26fc7f9) -> https://github.com/Anderson11205/fabom-global (branch main, upstream set)
+- Confirmed WEB3FORMS_ACCESS_KEY is server-side runtime env (api/contact/route.ts) -> add via vercel env add before/after deploy, no rebuild dependency
+- Confirmed prior layout fixes (Task 4: ScaledMock previews, hero phone below, Apex/Urban realism) are already committed and pushed
+- Remote URL stores PAT locally in .git/config for future pushes; user advised to revoke/regenerate token after site is live if desired
+
+Stage Summary:
+- Code is LIVE on GitHub: https://github.com/Anderson11205/fabom-global
+- Web3Forms "Website URL" field = label only, not verified -> user told to type fabom-global.vercel.app
+- Waiting on user for: (1) Web3Forms Access Key, (2) Vercel token from vercel.com/account/settings/tokens
+- Then: vercel link --project fabom-global -> vercel env add WEB3FORMS_ACCESS_KEY -> vercel --prod -> confirm URL -> set SITE.websiteUrl in footer -> push -> redeploy -> final QA
