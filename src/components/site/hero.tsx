@@ -12,7 +12,7 @@ function HeroShowcase() {
   return (
     <div aria-hidden="true" className="relative mx-auto w-full max-w-[440px] select-none">
       {/* Desktop preview */}
-      <MockBrowser url="yourbusiness.com" className="relative z-10">
+      <MockBrowser className="relative z-10">
         <div className="w-full">
           {/* Mini site nav */}
           <div className="flex items-center justify-between border-b border-black/[0.06] px-4 py-2.5">

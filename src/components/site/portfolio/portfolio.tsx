@@ -27,16 +27,16 @@ import {
 
 const MOCKUPS: Record<
   string,
-  { Desktop: React.ComponentType; Mobile: React.ComponentType; url: string }
+  { Desktop: React.ComponentType; Mobile: React.ComponentType }
 > = {
-  meridian: { Desktop: MeridianDesktop, Mobile: MeridianMobile, url: "meridianconsulting.example" },
-  haven: { Desktop: HavenDesktop, Mobile: HavenMobile, url: "havenandco.example" },
-  apex: { Desktop: ApexDesktop, Mobile: ApexMobile, url: "apexmotors.example" },
-  casaverde: { Desktop: CasaVerdeDesktop, Mobile: CasaVerdeMobile, url: "casaverde.example" },
-  sterling: { Desktop: SterlingDesktop, Mobile: SterlingMobile, url: "sterlinggrant.example" },
-  lumiere: { Desktop: LumiereDesktop, Mobile: LumiereMobile, url: "lumierestudio.example" },
-  atelier: { Desktop: AtelierDesktop, Mobile: AtelierMobile, url: "ateliernoir.example" },
-  urban: { Desktop: UrbanDesktop, Mobile: UrbanMobile, url: "urbanessentials.example" },
+  meridian: { Desktop: MeridianDesktop, Mobile: MeridianMobile },
+  haven: { Desktop: HavenDesktop, Mobile: HavenMobile },
+  apex: { Desktop: ApexDesktop, Mobile: ApexMobile },
+  casaverde: { Desktop: CasaVerdeDesktop, Mobile: CasaVerdeMobile },
+  sterling: { Desktop: SterlingDesktop, Mobile: SterlingMobile },
+  lumiere: { Desktop: LumiereDesktop, Mobile: LumiereMobile },
+  atelier: { Desktop: AtelierDesktop, Mobile: AtelierMobile },
+  urban: { Desktop: UrbanDesktop, Mobile: UrbanMobile },
 };
 
 function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void }) {
@@ -52,7 +52,7 @@ function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void
           className="relative block w-full cursor-pointer overflow-hidden border-b border-line bg-mist text-left"
         >
           <span className="pointer-events-none block h-52 overflow-hidden p-4 transition-transform duration-500 ease-out group-hover:scale-[1.015] sm:h-56 md:h-60">
-            <MockBrowser url={mock.url} className="w-full">
+            <MockBrowser className="w-full">
               <mock.Desktop />
             </MockBrowser>
           </span>
@@ -97,7 +97,7 @@ function CaseStudyBody({ project, onClose }: { project: Project; onClose: () => 
     <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr]">
       {/* Desktop + mobile previews */}
       <div className="flex flex-col gap-5">
-        <MockBrowser url={mock.url}>
+        <MockBrowser>
           <mock.Desktop />
         </MockBrowser>
         <div className="flex items-start gap-5">

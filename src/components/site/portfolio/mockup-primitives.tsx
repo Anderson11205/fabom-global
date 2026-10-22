@@ -7,11 +7,9 @@ import { cn } from "@/lib/utils";
  */
 
 export function MockBrowser({
-  url,
   children,
   className,
 }: {
-  url: string;
   children: React.ReactNode;
   className?: string;
 }) {
@@ -23,12 +21,6 @@ export function MockBrowser({
         className
       )}
     >
-      {/* Chrome bar — clean, no decorative dots */}
-      <div className="flex items-center gap-2 border-b border-black/[0.07] bg-[#eef0f3] px-3 py-1.5">
-        <span className="flex-1 truncate rounded-[3px] bg-white px-2 py-[3px] text-[7px] leading-none text-steel">
-          {url}
-        </span>
-      </div>
       {children}
     </div>
   );
