@@ -50,5 +50,19 @@ test
 prompt
 
 server.log
+
+# local database (contains enquiries) — never commit
+/db/
+
 # Skills directory
 /skills/
+# personal uploads / working files (not part of the website)
+/upload/
+/agent-ctx/
+/examples/
+/mini-services/
+/download/
+.env.local
+
+# keep the env template
+!.env.example

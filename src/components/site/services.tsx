@@ -62,7 +62,7 @@ export function Services() {
             Not sure which service fits?{" "}
             <a
               href="#contact"
-              className="font-semibold text-navy underline decoration-gold decoration-2 underline-offset-4 hover:text-navy-soft"
+              className="font-semibold text-navy transition-colors hover:text-navy-soft"
             >
               Send an enquiry
             </a>{" "}

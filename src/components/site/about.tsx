@@ -23,53 +23,40 @@ const APPROACH = [
 
 export function About() {
   return (
-    <section id="about" className="relative overflow-hidden bg-navy py-24 text-white md:py-32">
-      <div className="absolute inset-0 bg-blueprint-dark" aria-hidden="true" />
-      <div className="relative mx-auto max-w-6xl px-5 lg:px-8">
+    <section id="about" className="bg-white py-24 md:py-32">
+      <div className="mx-auto max-w-6xl px-5 lg:px-8">
         <div className="grid items-start gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          {/* Portrait — placeholder until the real photograph is added */}
+          {/* Portrait */}
           <Reveal>
-            <div className="relative mx-auto max-w-sm lg:mx-0">
-              <div
-                aria-hidden="true"
-                className="absolute -left-3 -top-3 h-full w-full border border-gold/50"
-              />
+            <div className="relative mx-auto w-full max-w-sm border border-line bg-mist lg:mx-0">
               {SITE.profileImage ? (
                 <img
                   src={SITE.profileImage}
                   alt="Emmanuel, website designer at FABOM GLOBAL"
-                  className="relative block aspect-[4/5] w-full object-cover"
+                  className="block aspect-[4/5] w-full object-cover object-top"
                 />
               ) : (
-                <div className="relative flex aspect-[4/5] w-full flex-col items-center justify-center gap-4 border border-white/15 bg-navy-soft">
-                  <span className="flex h-24 w-24 items-center justify-center border border-gold/60 font-display text-4xl font-bold text-gold">
+                <div className="flex aspect-[4/5] w-full flex-col items-center justify-center gap-4 bg-mist">
+                  <span className="flex h-24 w-24 items-center justify-center border border-gold/60 font-display text-4xl font-bold text-navy">
                     EF
                   </span>
-                  <span className="max-w-[24ch] text-center text-[11px] uppercase leading-relaxed tracking-[0.22em] text-white/50">
+                  <span className="max-w-[24ch] text-center text-[11px] uppercase leading-relaxed tracking-[0.22em] text-steel">
                     Professional photograph
                     <br />
                     goes here
                   </span>
                 </div>
               )}
-              <div className="absolute -bottom-5 -right-3 bg-gold px-4 py-3 text-navy shadow-[0_16px_40px_-16px_rgba(0,0,0,0.5)]">
-                <span className="block font-display text-lg font-bold leading-none">
-                  FABOM GLOBAL
-                </span>
-                <span className="mt-1 block text-[9px] font-semibold uppercase tracking-[0.24em]">
-                  Website design studio
-                </span>
-              </div>
             </div>
           </Reveal>
 
           {/* Copy */}
           <Reveal delay={0.12}>
             <p className="section-label">About</p>
-            <h2 className="mt-5 font-display text-3xl font-bold leading-tight md:text-[2.75rem]">
+            <h2 className="mt-5 font-display text-3xl font-bold leading-tight text-navy md:text-[2.75rem]">
               A designer who treats your website like his own
             </h2>
-            <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-white/75">
+            <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-steel">
               <p>
                 I&apos;m Emmanuel, the designer behind FABOM GLOBAL. I build
                 websites for businesses that understand something important:
@@ -95,14 +82,14 @@ export function About() {
               </p>
             </div>
 
-            <div className="mt-9 grid gap-px border border-white/12 bg-white/10 sm:grid-cols-3">
+            <div className="mt-9 grid gap-4 sm:grid-cols-3">
               {APPROACH.map((a) => (
-                <div key={a.title} className="bg-navy p-5">
-                  <a.icon className="h-4.5 w-4.5 text-gold" aria-hidden="true" />
-                  <h3 className="mt-3 font-display text-[15px] font-bold">
+                <div key={a.title} className="border border-line bg-mist p-5">
+                  <a.icon className="h-[18px] w-[18px] text-gold" aria-hidden="true" />
+                  <h3 className="mt-3 font-display text-[15px] font-bold text-navy">
                     {a.title}
                   </h3>
-                  <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/65">
+                  <p className="mt-1.5 text-[12.5px] leading-relaxed text-steel">
                     {a.text}
                   </p>
                 </div>
@@ -112,7 +99,7 @@ export function About() {
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <a
                 href="#contact"
-                className="inline-flex h-11 items-center justify-center bg-gold px-6 text-[13px] font-semibold text-navy transition-colors hover:bg-gold-soft"
+                className="inline-flex h-11 items-center justify-center bg-navy px-6 text-[13px] font-semibold text-white transition-colors hover:bg-navy-soft"
               >
                 Start a conversation
               </a>
@@ -120,9 +107,9 @@ export function About() {
                 href={SITE.whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-11 items-center justify-center gap-2 border border-white/25 px-6 text-[13px] font-semibold text-white transition-colors hover:border-gold hover:text-gold"
+                className="inline-flex h-11 items-center justify-center gap-2 border border-navy/25 px-6 text-[13px] font-semibold text-navy transition-colors hover:border-gold hover:bg-gold-tint"
               >
-                <WhatsAppIcon />
+                <WhatsAppIcon className="text-[#1faa53]" />
                 WhatsApp me directly
               </a>
             </div>

@@ -22,13 +22,19 @@ function isRateLimited(ip: string): boolean {
   return entry.count > RATE_LIMIT;
 }
 
-/* ── Optional email delivery via Resend ────────────────────────────────── */
-/**
- * Enquiries are ALWAYS stored in the database. When RESEND_API_KEY is set
- * (see README → "Email delivery setup"), a formatted copy of every enquiry
- * is additionally emailed to CONTACT_TO_EMAIL (default: the business inbox).
- */
-async function emailEnquiry(input: {
+/* ── Enquiry delivery ──────────────────────────────────────────────────────
+ * Every enquiry is emailed to the business inbox. Two providers are
+ * supported (first one configured wins):
+ *
+ *  1. Web3Forms  — simplest. Create a free access key at web3forms.com with
+ *     the business email, set WEB3FORMS_ACCESS_KEY. Done.
+ *  2. Resend     — set RESEND_API_KEY (see README → email delivery).
+ *
+ * When a database is configured (DATABASE_URL), submissions are also stored
+ * as a backup copy.
+ * ------------------------------------------------------------------------ */
+
+type EnquiryInput = {
   fullName: string;
   email: string;
   businessName: string;
@@ -39,7 +45,42 @@ async function emailEnquiry(input: {
   preferredTimeline?: string;
   projectDescription: string;
   reference: string;
-}): Promise<"sent" | "failed" | "skipped"> {
+};
+
+type Delivery = "sent" | "failed" | "skipped";
+
+async function sendViaWeb3Forms(input: EnquiryInput): Promise<Delivery> {
+  const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
+  if (!accessKey) return "skipped";
+
+  try {
+    const res = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: accessKey,
+        subject: `New website enquiry — ${input.businessName} (#${input.reference.slice(-8).toUpperCase()})`,
+        from_name: "FABOM GLOBAL Website",
+        full_name: input.fullName,
+        email: input.email,
+        business_name: input.businessName,
+        current_website: input.currentWebsite || "—",
+        business_type: input.businessType,
+        service_required: input.serviceRequired,
+        estimated_budget: input.estimatedBudget || "—",
+        preferred_timeline: input.preferredTimeline || "—",
+        message: input.projectDescription,
+        reference: input.reference,
+      }),
+    });
+    const data = (await res.json().catch(() => null)) as { success?: boolean } | null;
+    return res.ok && data?.success === true ? "sent" : "failed";
+  } catch {
+    return "failed";
+  }
+}
+
+async function sendViaResend(input: EnquiryInput): Promise<Delivery> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return "skipped";
 
@@ -98,6 +139,54 @@ async function emailEnquiry(input: {
   }
 }
 
+async function emailEnquiry(input: EnquiryInput): Promise<Delivery> {
+  // Web3Forms first (simplest setup), Resend as the alternative.
+  const web3forms = await sendViaWeb3Forms(input);
+  if (web3forms !== "skipped") return web3forms;
+
+  const resend = await sendViaResend(input);
+  if (resend !== "skipped") return resend;
+
+  return "skipped";
+}
+
+/* ── Optional database backup copy ──────────────────────────────────────── */
+async function storeEnquiry(v: {
+  fullName: string;
+  email: string;
+  businessName: string;
+  currentWebsite?: string;
+  businessType: string;
+  serviceRequired: string;
+  estimatedBudget?: string;
+  preferredTimeline?: string;
+  projectDescription: string;
+  consent: boolean;
+}): Promise<string | null> {
+  if (!db) return null;
+  try {
+    const enquiry = await db.enquiry.create({
+      data: {
+        fullName: v.fullName,
+        email: v.email,
+        businessName: v.businessName,
+        currentWebsite: v.currentWebsite || null,
+        businessType: v.businessType,
+        serviceRequired: v.serviceRequired,
+        estimatedBudget: v.estimatedBudget || null,
+        preferredTimeline: v.preferredTimeline || null,
+        projectDescription: v.projectDescription,
+        consent: v.consent,
+      },
+    });
+    return enquiry.id;
+  } catch (error) {
+    // A missing/misconfigured database must never block an enquiry.
+    console.error("[/api/contact] database unavailable, continuing by email:", error);
+    return null;
+  }
+}
+
 /* ── POST /api/contact ─────────────────────────────────────────────────── */
 export async function POST(request: NextRequest) {
   const ip =
@@ -141,57 +230,53 @@ export async function POST(request: NextRequest) {
   }
 
   const v = parsed.data;
+  const reference =
+    (await storeEnquiry(v)) ??
+    `web-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
-  try {
-    const enquiry = await db.enquiry.create({
-      data: {
-        fullName: v.fullName,
-        email: v.email,
-        businessName: v.businessName,
-        currentWebsite: v.currentWebsite || null,
-        businessType: v.businessType,
-        serviceRequired: v.serviceRequired,
-        estimatedBudget: v.estimatedBudget || null,
-        preferredTimeline: v.preferredTimeline || null,
-        projectDescription: v.projectDescription,
-        consent: v.consent,
-      },
-    });
+  const delivery = await emailEnquiry({
+    fullName: v.fullName,
+    email: v.email,
+    businessName: v.businessName,
+    currentWebsite: v.currentWebsite || undefined,
+    businessType: v.businessType,
+    serviceRequired: v.serviceRequired,
+    estimatedBudget: v.estimatedBudget || undefined,
+    preferredTimeline: v.preferredTimeline || undefined,
+    projectDescription: v.projectDescription,
+    reference,
+  });
 
-    const delivery = await emailEnquiry({
-      fullName: v.fullName,
-      email: v.email,
-      businessName: v.businessName,
-      currentWebsite: v.currentWebsite || undefined,
-      businessType: v.businessType,
-      serviceRequired: v.serviceRequired,
-      estimatedBudget: v.estimatedBudget || undefined,
-      preferredTimeline: v.preferredTimeline || undefined,
-      projectDescription: v.projectDescription,
-      reference: enquiry.id,
-    });
-
-    if (delivery !== "skipped") {
+  if (db && reference.startsWith("c")) {
+    // Reference came from the database — record the delivery state.
+    try {
       await db.enquiry.update({
-        where: { id: enquiry.id },
-        data: { emailDelivery: delivery === "sent" ? "emailed" : "email_failed" },
+        where: { id: reference },
+        data: { emailDelivery: delivery === "sent" ? "emailed" : delivery === "failed" ? "email_failed" : "stored" },
       });
+    } catch {
+      /* non-critical */
     }
+  }
 
+  const stored = !reference.startsWith("web-");
+  if (delivery === "sent" || stored) {
     return NextResponse.json({
       ok: true,
-      reference: enquiry.id,
+      reference,
       delivery,
+      storedInDatabase: stored,
     });
-  } catch (error) {
-    console.error("[/api/contact] failed to store enquiry:", error);
-    return NextResponse.json(
-      {
-        ok: false,
-        message:
-          "Your enquiry could not be saved just now. Please try again in a moment, or contact me directly by email or WhatsApp.",
-      },
-      { status: 500 }
-    );
   }
+
+  // Nothing stored and no email provider configured — be honest so the
+  // visitor can use a channel that definitely reaches the business.
+  return NextResponse.json(
+    {
+      ok: false,
+      message:
+        "The enquiry could not be delivered just now. Please email me directly or message me on WhatsApp — both reach me instantly.",
+    },
+    { status: 503 }
+  );
 }

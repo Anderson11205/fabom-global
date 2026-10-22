@@ -6,16 +6,14 @@ import { MockBrowser, MockButton, MockImage, MockPhone } from "./portfolio/mocku
 /**
  * Decorative composition: a CSS-built preview of a generic professional
  * business website (desktop + mobile) — a taste of what FABOM GLOBAL builds.
+ * Fully fluid width so nothing is ever cut off on small screens.
  */
 function HeroShowcase() {
   return (
-    <div aria-hidden="true" className="relative select-none">
-      {/* Backdrop panel */}
-      <div className="absolute -inset-6 -z-10 bg-mist bg-blueprint md:-inset-10" />
-
+    <div aria-hidden="true" className="relative mx-auto w-full max-w-[440px] select-none">
       {/* Desktop preview */}
       <MockBrowser url="yourbusiness.com" className="relative z-10">
-        <div className="w-[340px] sm:w-[420px]">
+        <div className="w-full">
           {/* Mini site nav */}
           <div className="flex items-center justify-between border-b border-black/[0.06] px-4 py-2.5">
             <span className="font-display text-[10px] font-bold tracking-tight text-navy">
@@ -72,7 +70,7 @@ function HeroShowcase() {
             <span className="text-[7px] font-semibold text-navy">
               Ready to get started?
             </span>
-            <span className="text-[6.5px] font-semibold text-navy underline underline-offset-2">
+            <span className="text-[6.5px] font-semibold text-navy">
               Contact us →
             </span>
           </div>
@@ -80,7 +78,7 @@ function HeroShowcase() {
       </MockBrowser>
 
       {/* Phone preview */}
-      <MockPhone className="absolute -bottom-8 -right-3 z-20 w-[104px] sm:-right-6 sm:w-[120px]">
+      <MockPhone className="absolute -bottom-7 -right-2 z-20 w-[96px] sm:-right-5 sm:w-[116px]">
         <div className="bg-navy px-2.5 pb-3 pt-2 text-white">
           <div className="flex items-center justify-between">
             <span className="font-display text-[7px] font-bold">Your Business</span>
@@ -111,16 +109,6 @@ function HeroShowcase() {
           </div>
         </div>
       </MockPhone>
-
-      {/* Floating caption chip */}
-      <div className="absolute -left-3 bottom-14 z-20 hidden bg-white px-3 py-2 shadow-[0_10px_30px_-10px_rgba(13,26,44,0.3)] md:block">
-        <span className="block text-[7px] font-semibold uppercase tracking-[0.22em] text-gold">
-          Concept preview
-        </span>
-        <span className="mt-0.5 block text-[8px] font-medium text-navy">
-          Designed · Mobile-first · Fast
-        </span>
-      </div>
     </div>
   );
 }
@@ -158,21 +146,21 @@ export function Hero() {
             </a>
           </div>
 
-          <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-6 text-[13px] text-steel">
+          <div className="mt-12 flex flex-col gap-3 border-t border-line pt-6 text-[13px] text-steel sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6">
             <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5 text-gold" />
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" />
               Based in {SITE.location} — working with businesses everywhere
             </span>
             <a
               href={`mailto:${SITE.email}`}
-              className="font-medium text-navy underline decoration-gold decoration-2 underline-offset-4 hover:text-navy-soft"
+              className="font-medium text-navy transition-colors hover:text-navy-soft"
             >
               {SITE.email}
             </a>
           </div>
         </Reveal>
 
-        <Reveal delay={0.15} className="pb-8 pr-2 md:pb-10 md:pr-6 lg:pb-14">
+        <Reveal delay={0.15} className="pb-10 md:pb-12 lg:pb-14">
           <HeroShowcase />
         </Reveal>
       </div>

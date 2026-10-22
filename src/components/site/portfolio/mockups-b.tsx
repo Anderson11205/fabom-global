@@ -140,7 +140,7 @@ export function LumiereDesktop() {
       </div>
       <div className="flex items-center justify-between bg-[#3d2b30] px-4 py-3 text-[#faf3f2]">
         <span className="text-[7px] font-semibold">Open late Thursday evenings</span>
-        <span className="text-[6.5px] underline underline-offset-2">Book online</span>
+        <span className="text-[6.5px]">Book online</span>
       </div>
     </div>
   );

@@ -111,6 +111,9 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 5.5rem;
+    /* Keep the site in its designed light palette — prevents mobile
+       browsers from force-darkening and distorting the brand colours. */
+    color-scheme: light;
   }
   @media (prefers-reduced-motion: reduce) {
     html {
@@ -136,28 +139,7 @@
   .section-label {
     @apply inline-flex items-center gap-3 text-[0.6875rem] font-semibold uppercase tracking-[0.28em] text-gold;
   }
-  .section-label::before {
-    content: "";
-    @apply block h-px w-8 bg-gold;
-  }
-  /* Hairline grid borders for editorial cards */
-  .grid-lines {
-    @apply border border-line;
-  }
   .text-balance {
     text-wrap: balance;
-  }
-  /* Subtle blueprint grid used behind hero */
-  .bg-blueprint {
-    background-image:
-      linear-gradient(to right, rgba(20, 36, 58, 0.045) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(20, 36, 58, 0.045) 1px, transparent 1px);
-    background-size: 56px 56px;
-  }
-  .bg-blueprint-dark {
-    background-image:
-      linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-    background-size: 56px 56px;
   }
 }

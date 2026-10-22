@@ -23,12 +23,9 @@ export function MockBrowser({
         className
       )}
     >
-      {/* Chrome bar */}
-      <div className="flex items-center gap-2 border-b border-black/[0.07] bg-[#eef0f3] px-2.5 py-1.5">
-        <span className="h-[7px] w-[7px] rounded-full bg-[#f26d5f]" />
-        <span className="h-[7px] w-[7px] rounded-full bg-[#f4bd4e]" />
-        <span className="h-[7px] w-[7px] rounded-full bg-[#5fc454]" />
-        <span className="ml-2 flex-1 truncate rounded-[3px] bg-white px-2 py-[3px] text-[7px] leading-none text-steel">
+      {/* Chrome bar — clean, no decorative dots */}
+      <div className="flex items-center gap-2 border-b border-black/[0.07] bg-[#eef0f3] px-3 py-1.5">
+        <span className="flex-1 truncate rounded-[3px] bg-white px-2 py-[3px] text-[7px] leading-none text-steel">
           {url}
         </span>
       </div>
@@ -119,10 +116,6 @@ export function MockImage({
         className
       )}
     >
-      <span
-        aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-br from-white/25 via-transparent to-black/15"
-      />
       {icon ? <span className="relative opacity-60">{icon}</span> : null}
     </span>
   );

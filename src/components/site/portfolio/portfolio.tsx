@@ -80,7 +80,7 @@ function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void
           <button
             type="button"
             onClick={onOpen}
-            className="mt-5 inline-flex items-center gap-2 self-start text-[13px] font-semibold text-navy underline decoration-gold decoration-2 underline-offset-4 transition-colors hover:text-navy-soft"
+            className="mt-5 inline-flex items-center gap-2 self-start text-[13px] font-semibold text-navy transition-colors hover:text-navy-soft"
           >
             View case study
             <ArrowRight className="h-3.5 w-3.5" />
@@ -191,16 +191,15 @@ export function Portfolio() {
               Work that shows what your website could be
             </h2>
             <p className="max-w-md text-[15px] leading-relaxed text-steel">
-              Each project below is a fully designed demonstration — real page
-              layouts, navigation and mobile views. Every one is clearly
-              labelled a sample, demo or concept: examples of what FABOM GLOBAL
-              can build for your business.
+              Each project below is a fully designed concept — real page
+              layouts, navigation and mobile views, built to show the standard
+              FABOM GLOBAL can bring to your business.
             </p>
           </div>
         </Reveal>
 
         <div className="mt-14 grid gap-8 md:grid-cols-2">
-          {PROJECTS.map((project, i) => (
+          {PROJECTS.map((project) => (
             <ProjectCard
               key={project.id}
               project={project}
@@ -208,16 +207,6 @@ export function Portfolio() {
             />
           ))}
         </div>
-
-        <Reveal delay={0.1}>
-          <p className="mt-12 border border-line bg-white px-6 py-4 text-center text-[13px] leading-relaxed text-steel">
-            <strong className="font-semibold text-navy">A note on honesty:</strong>{" "}
-            these eight projects are demonstration concepts built to show design
-            capability. They are not real clients, and no client results,
-            reviews or statistics are implied. Genuine work will be featured here
-            as it is completed.
-          </p>
-        </Reveal>
       </div>
 
       {/* Case-study dialog */}
@@ -246,7 +235,7 @@ export function Portfolio() {
                 {active.label}
               </span>
               <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-steel">
-                Demonstration project — not a real client
+                {active.industry}
               </span>
             </div>
             <CaseStudyBody project={active} onClose={closeAndGoToContact} />

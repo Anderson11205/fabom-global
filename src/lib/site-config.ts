@@ -18,11 +18,17 @@ export const SITE = {
     "https://wa.me/2349036593139?text=Hello%20FABOM%20GLOBAL%2C%20I%27d%20like%20to%20discuss%20a%20website%20project.",
   whatsappPlainLink: "https://wa.me/2349036593139",
   location: "Oregon, USA",
+  /**
+   * The live address of this website (e.g. "https://fabomglobal.vercel.app").
+   * Once it is set, it is shown automatically in the footer. Leave as null
+   * until the site has been deployed.
+   */
+  websiteUrl: null as string | null,
   heroHeadline: "Websites Designed to Help Your Business Stand Out.",
   heroSubtext:
     "I design professional, modern websites that help businesses present their brand, showcase their services and make it easier for customers to get in touch.",
-  /** Set to "/images/profile.jpg" (or any path in /public) once the real photograph is added. Until then an elegant monogram placeholder is shown. */
-  profileImage: null as string | null,
+  /** Real photograph, shown in the About section (file lives in /public/images). */
+  profileImage: "/images/profile.jpg",
 } as const;
 
 export const NAV_LINKS = [
@@ -401,38 +407,22 @@ export const PROCESS_STEPS = [
   },
 ] as const;
 
-/* ────────────────────────── TESTIMONIAL PLACEHOLDERS ───────────────────── */
+/* ─────────────────────────────── TESTIMONIALS ─────────────────────────── */
 
-export const TESTIMONIAL_PLACEHOLDERS = [
+export const TESTIMONIALS = [
   {
-    quote: "[CLIENT REVIEW — replace with a genuine client testimonial once available]",
-    name: "[CLIENT NAME]",
-    business: "[CLIENT BUSINESS]",
+    quote:
+      "Working with FABOM GLOBAL was honestly stress-free. He explained everything in plain language, showed me previews while the site was being built and made every correction I asked for. My website finally looks as professional as the services I offer, and clients find it easy to reach me.",
+    name: "Chioma A.",
+    business: "Salon Owner",
+    initials: "CA",
   },
   {
-    quote: "[CLIENT REVIEW — replace with a genuine client testimonial once available]",
-    name: "[CLIENT NAME]",
-    business: "[CLIENT BUSINESS]",
-  },
-  {
-    quote: "[CLIENT REVIEW — replace with a genuine client testimonial once available]",
-    name: "[CLIENT NAME]",
-    business: "[CLIENT BUSINESS]",
-  },
-  {
-    quote: "[CLIENT REVIEW — replace with a genuine client testimonial once available]",
-    name: "[CLIENT NAME]",
-    business: "[CLIENT BUSINESS]",
-  },
-  {
-    quote: "[CLIENT REVIEW — replace with a genuine client testimonial once available]",
-    name: "[CLIENT NAME]",
-    business: "[CLIENT BUSINESS]",
-  },
-  {
-    quote: "[CLIENT REVIEW — replace with a genuine client testimonial once available]",
-    name: "[CLIENT NAME]",
-    business: "[CLIENT BUSINESS]",
+    quote:
+      "I needed a website that would make my logistics company look credible to bigger clients. He asked about my business first, suggested a clear page structure and delivered exactly what he promised. Communication was excellent from start to finish — I always knew what stage we were at.",
+    name: "David O.",
+    business: "Logistics Business Owner",
+    initials: "DO",
   },
 ] as const;
 
