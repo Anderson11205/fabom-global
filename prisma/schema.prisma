@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Enquiries submitted through the FABOM GLOBAL contact form.
+// Every submission is stored here; email forwarding to the business
+// inbox is optional and activated when RESEND_API_KEY is configured.
+model Enquiry {
+  id                 String   @id @default(cuid())
+  fullName           String
+  email              String
+  businessName       String
+  currentWebsite     String?
+  businessType       String
+  serviceRequired    String
+  estimatedBudget    String?
+  preferredTimeline  String?
+  projectDescription String
+  consent            Boolean
+  emailDelivery      String   @default("stored") // stored | emailed | email_failed
+  createdAt          DateTime @default(now())
+}
