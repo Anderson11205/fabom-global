@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import { WhatsAppIcon } from "./whatsapp-icon";
+import { WhatsAppTrigger } from "./whatsapp-trigger";
 
 function Monogram({ className }: { className?: string }) {
   return (
@@ -122,15 +123,10 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <a
-            href={SITE.whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex h-10 items-center gap-2 border border-line px-4 text-[13px] font-semibold text-navy transition-colors hover:border-gold hover:bg-gold-tint"
-          >
+          <WhatsAppTrigger className="inline-flex h-10 items-center gap-2 border border-line px-4 text-[13px] font-semibold text-navy transition-colors hover:border-gold hover:bg-gold-tint">
             <WhatsAppIcon className="h-4 w-4 text-[#1faa53]" />
             WhatsApp
-          </a>
+          </WhatsAppTrigger>
           <a
             href="#contact"
             className="inline-flex h-10 items-center bg-navy px-5 text-[13px] font-semibold text-white transition-colors hover:bg-navy-soft"
@@ -179,15 +175,13 @@ export function Navbar() {
             >
               Let&apos;s Build Your Website
             </a>
-            <a
-              href={SITE.whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-12 items-center justify-center gap-2 border border-line text-sm font-semibold text-navy"
+            <WhatsAppTrigger
+              onClick={() => setOpen(false)}
+              className="inline-flex h-12 w-full items-center justify-center gap-2 border border-line text-sm font-semibold text-navy"
             >
               <WhatsAppIcon className="h-4 w-4 text-[#1faa53]" />
               Chat on WhatsApp — {SITE.whatsappDisplay}
-            </a>
+            </WhatsAppTrigger>
           </div>
         </nav>
       </div>

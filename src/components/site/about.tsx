@@ -2,6 +2,7 @@ import { MessageSquare, PencilRuler, Rocket } from "lucide-react";
 import { SITE } from "@/lib/site-config";
 import { Reveal } from "./reveal";
 import { WhatsAppIcon } from "./whatsapp-icon";
+import { WhatsAppTrigger } from "./whatsapp-trigger";
 
 const APPROACH = [
   {
@@ -103,15 +104,10 @@ export function About() {
               >
                 Start a conversation
               </a>
-              <a
-                href={SITE.whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-11 items-center justify-center gap-2 border border-navy/25 px-6 text-[13px] font-semibold text-navy transition-colors hover:border-gold hover:bg-gold-tint"
-              >
+              <WhatsAppTrigger className="inline-flex h-11 items-center justify-center gap-2 border border-navy/25 px-6 text-[13px] font-semibold text-navy transition-colors hover:border-gold hover:bg-gold-tint">
                 <WhatsAppIcon className="text-[#1faa53]" />
                 WhatsApp me directly
-              </a>
+              </WhatsAppTrigger>
             </div>
           </Reveal>
         </div>

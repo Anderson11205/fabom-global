@@ -1,6 +1,7 @@
 import { Globe, Mail, MapPin } from "lucide-react";
 import { SITE } from "@/lib/site-config";
 import { WhatsAppIcon } from "./whatsapp-icon";
+import { WhatsAppTrigger } from "./whatsapp-trigger";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -54,15 +55,10 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href={SITE.whatsappPlainLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 text-[13px] text-white/70 transition-colors hover:text-white"
-                >
+                <WhatsAppTrigger className="inline-flex items-center gap-2.5 text-[13px] text-white/70 transition-colors hover:text-white">
                   <WhatsAppIcon className="h-4 w-4 shrink-0 text-[#4fce5d]" />
                   WhatsApp: {SITE.whatsappDisplay}
-                </a>
+                </WhatsAppTrigger>
               </li>
               {SITE.websiteUrl ? (
                 <li>

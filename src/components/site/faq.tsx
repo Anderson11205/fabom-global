@@ -4,9 +4,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { FAQS, SITE } from "@/lib/site-config";
+import { FAQS } from "@/lib/site-config";
 import { Reveal } from "./reveal";
 import { WhatsAppIcon } from "./whatsapp-icon";
+import { WhatsAppTrigger } from "./whatsapp-trigger";
 
 export function FAQ() {
   return (
@@ -38,15 +39,10 @@ export function FAQ() {
               >
                 Send an enquiry
               </a>
-              <a
-                href={SITE.whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-10 items-center justify-center gap-2 border border-line bg-white px-5 text-[13px] font-semibold text-navy transition-colors hover:border-gold"
-              >
+              <WhatsAppTrigger className="inline-flex h-10 items-center justify-center gap-2 border border-line bg-white px-5 text-[13px] font-semibold text-navy transition-colors hover:border-gold">
                 <WhatsAppIcon className="text-[#1faa53]" />
                 Ask on WhatsApp
-              </a>
+              </WhatsAppTrigger>
             </div>
           </div>
         </Reveal>

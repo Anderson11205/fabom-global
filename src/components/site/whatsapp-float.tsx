@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { SITE } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import { WhatsAppIcon } from "./whatsapp-icon";
+import { WHATSAPP_CHOOSER_EVENT } from "./whatsapp-trigger";
 
 /**
  * Floating WhatsApp bubble with an app chooser.
@@ -39,6 +40,17 @@ export function WhatsAppFloat() {
   // Detect platform after mount so server and client render identically.
   useEffect(() => {
     setIsAndroid(/Android/i.test(navigator.userAgent));
+  }, []);
+
+  // Any WhatsApp CTA elsewhere on the page (navbar, hero Book Now, form,
+  // footer, FAQ, about) opens THIS chooser so the visitor always gets the
+  // WhatsApp / WhatsApp Business choice and a real app deep link.
+  useEffect(() => {
+    function onOpen() {
+      setOpen(true);
+    }
+    window.addEventListener(WHATSAPP_CHOOSER_EVENT, onOpen);
+    return () => window.removeEventListener(WHATSAPP_CHOOSER_EVENT, onOpen);
   }, []);
 
   // Close on Escape and on taps outside the bubble/panel.
@@ -123,8 +135,8 @@ export function WhatsAppFloat() {
           </div>
 
           <p className="mt-3 text-[11.5px] leading-relaxed text-steel">
-            Your chat opens with a ready message. If your phone has both apps
-            installed, it will ask which one to use — tap the one you prefer.
+            Choose the WhatsApp you use — the chat opens straight in that app
+            with your message ready. No downloads needed.
           </p>
         </div>
       ) : null}

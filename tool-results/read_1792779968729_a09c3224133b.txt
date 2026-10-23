@@ -1,0 +1,644 @@
+     1→"use client";
+     2→
+     3→import { useState } from "react";
+     4→import { useForm } from "react-hook-form";
+     5→import { zodResolver } from "@hookform/resolvers/zod";
+     6→import { ArrowRight, CheckCircle2, Mail, MapPin, Send } from "lucide-react";
+     7→import { toast } from "@/hooks/use-toast";
+     8→import { Button } from "@/components/ui/button";
+     9→import { Checkbox } from "@/components/ui/checkbox";
+    10→import {
+    11→  Form,
+    12→  FormControl,
+    13→  FormField,
+    14→  FormItem,
+    15→  FormLabel,
+    16→  FormMessage,
+    17→} from "@/components/ui/form";
+    18→import { Input } from "@/components/ui/input";
+    19→import {
+    20→  Select,
+    21→  SelectContent,
+    22→  SelectItem,
+    23→  SelectTrigger,
+    24→  SelectValue,
+    25→} from "@/components/ui/select";
+    26→import { Textarea } from "@/components/ui/textarea";
+    27→import {
+    28→  BUSINESS_TYPES,
+    29→  BUDGET_OPTIONS,
+    30→  SERVICE_OPTIONS,
+    31→  SITE,
+    32→  TIMELINE_OPTIONS,
+    33→} from "@/lib/site-config";
+    34→import { contactFormSchema, type ContactFormValues } from "@/lib/contact-schema";
+    35→import { CONTACT_FORM_DEFAULTS } from "@/lib/contact-schema";
+    36→import { Reveal } from "./reveal";
+    37→import { WhatsAppIcon } from "./whatsapp-icon";
+    38→
+    39→type SubmitState =
+    40→  | { status: "idle" }
+    41→  | { status: "sending" }
+    42→  | { status: "success"; reference: string }
+    43→  | { status: "error"; message: string };
+    44→
+    45→/**
+    46→ * Web3Forms access key (safe to expose client-side — it can only be used to
+    47→ * deliver messages to the business inbox, which is the whole point). The
+    48→ * free plan requires the submission to come from the visitor's browser,
+    49→ * so this fetch happens directly in the client.
+    50→ */
+    51→const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ?? "";
+    52→
+    53→async function submitToWeb3Forms(
+    54→  values: ContactFormValues,
+    55→  reference: string
+    56→): Promise<boolean> {
+    57→  if (!WEB3FORMS_KEY) return false;
+    58→  try {
+    59→    const res = await fetch("https://api.web3forms.com/submit", {
+    60→      method: "POST",
+    61→      headers: { "Content-Type": "application/json", Accept: "application/json" },
+    62→      body: JSON.stringify({
+    63→        access_key: WEB3FORMS_KEY,
+    64→        subject: `New website enquiry — ${values.businessName} (#${reference.slice(-8).toUpperCase()})`,
+    65→        from_name: "FABOM GLOBAL Website",
+    66→        full_name: values.fullName,
+    67→        email: values.email,
+    68→        business_name: values.businessName,
+    69→        current_website: values.currentWebsite || "—",
+    70→        business_type: values.businessType,
+    71→        service_required: values.serviceRequired,
+    72→        estimated_budget: values.estimatedBudget || "—",
+    73→        preferred_timeline: values.preferredTimeline || "—",
+    74→        message: values.projectDescription,
+    75→        reference,
+    76→        botcheck: "",
+    77→      }),
+    78→    });
+    79→    const data = (await res.json().catch(() => null)) as { success?: boolean } | null;
+    80→    return res.ok && data?.success === true;
+    81→  } catch {
+    82→    return false;
+    83→  }
+    84→}
+    85→
+    86→function ContactMethods() {
+    87→  return (
+    88→    <div className="space-y-4">
+    89→      <a
+    90→        href={`mailto:${SITE.email}?subject=Website%20enquiry`}
+    91→        className="flex items-start gap-4 border border-line bg-white p-5 transition-colors hover:border-gold"
+    92→      >
+    93→        <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-navy text-gold">
+    94→          <Mail className="h-4 w-4" aria-hidden="true" />
+    95→        </span>
+    96→        <span>
+    97→          <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-steel">
+    98→            Email
+    99→          </span>
+   100→          <span className="mt-1 block text-[14px] font-semibold text-navy">
+   101→            {SITE.email}
+   102→          </span>
+   103→          <span className="mt-1 block text-[12.5px] text-steel">
+   104→            Best for detailed briefs — attach anything useful.
+   105→          </span>
+   106→        </span>
+   107→      </a>
+   108→
+   109→      <a
+   110→        href={SITE.whatsappLink}
+   111→        target="_blank"
+   112→        rel="noopener noreferrer"
+   113→        className="flex items-start gap-4 border border-line bg-white p-5 transition-colors hover:border-[#1faa53]"
+   114→      >
+   115→        <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#1faa53] text-white">
+   116→          <WhatsAppIcon className="h-5 w-5" aria-hidden="true" />
+   117→        </span>
+   118→        <span>
+   119→          <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-steel">
+   120→            WhatsApp
+   121→          </span>
+   122→          <span className="mt-1 block text-[14px] font-semibold text-navy">
+   123→            {SITE.whatsappDisplay}
+   124→          </span>
+   125→          <span className="mt-1 block text-[12.5px] text-steel">
+   126→            Fastest way to reach me — opens a direct chat.
+   127→          </span>
+   128→        </span>
+   129→      </a>
+   130→
+   131→      <div className="flex items-start gap-4 border border-line bg-white p-5">
+   132→        <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-navy text-gold">
+   133→          <MapPin className="h-4 w-4" aria-hidden="true" />
+   134→        </span>
+   135→        <span>
+   136→          <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-steel">
+   137→            Location
+   138→          </span>
+   139→          <span className="mt-1 block text-[14px] font-semibold text-navy">
+   140→            {SITE.location}
+   141→          </span>
+   142→          <span className="mt-1 block text-[12.5px] text-steel">
+   143→            Working with businesses locally and worldwide — meetings happen
+   144→            online.
+   145→          </span>
+   146→        </span>
+   147→      </div>
+   148→
+   149→      <div className="border border-line bg-navy p-5 text-white">
+   150→        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-gold">
+   151→          What happens next
+   152→        </p>
+   153→        <ol className="mt-3 space-y-2.5 text-[13px] leading-relaxed text-white/75">
+   154→          <li className="flex gap-2.5">
+   155→            <span className="font-display font-bold text-gold">1.</span>
+   156→            Your enquiry is read personally — no bots, no call centres.
+   157→          </li>
+   158→          <li className="flex gap-2.5">
+   159→            <span className="font-display font-bold text-gold">2.</span>
+   160→            We discuss your goals and I recommend the most practical approach.
+   161→          </li>
+   162→          <li className="flex gap-2.5">
+   163→            <span className="font-display font-bold text-gold">3.</span>
+   164→            You receive a clear, itemised quote — no obligation, no pressure.
+   165→          </li>
+   166→        </ol>
+   167→      </div>
+   168→    </div>
+   169→  );
+   170→}
+   171→
+   172→export function ContactSection() {
+   173→  const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle" });
+   174→
+   175→  const form = useForm<ContactFormValues>({
+   176→    resolver: zodResolver(contactFormSchema),
+   177→    defaultValues: CONTACT_FORM_DEFAULTS,
+   178→    mode: "onTouched",
+   179→  });
+   180→
+   181→  async function onSubmit(values: ContactFormValues) {
+   182→    setSubmitState({ status: "sending" });
+   183→    const reference = `web-${Date.now().toString(36)}${Math.random()
+   184→      .toString(36)
+   185→      .slice(2, 8)}`;
+   186→
+   187→    // Primary path: deliver straight from the visitor's browser via Web3Forms
+   188→    // (the free plan requires this — server-to-server calls are refused).
+   189→    const delivered = await submitToWeb3Forms(values, reference);
+   190→
+   191→    if (delivered) {
+   192→      setSubmitState({ status: "success", reference });
+   193→      form.reset(CONTACT_FORM_DEFAULTS);
+   194→      toast({
+   195→        title: "Enquiry sent",
+   196→        description: "Thank you — your project enquiry has been received.",
+   197→      });
+   198→      return;
+   199→    }
+   200→
+   201→    // Fallback path: hand the enquiry to our own API (server-side provider).
+   202→    try {
+   203→      const res = await fetch("/api/contact", {
+   204→        method: "POST",
+   205→        headers: { "Content-Type": "application/json" },
+   206→        body: JSON.stringify(values),
+   207→      });
+   208→      const data = (await res.json()) as {
+   209→        ok?: boolean;
+   210→        reference?: string;
+   211→        message?: string;
+   212→      };
+   213→
+   214→      if (!res.ok || !data.ok) {
+   215→        throw new Error(
+   216→          data.message ?? "Something went wrong while sending your enquiry."
+   217→        );
+   218→      }
+   219→
+   220→      setSubmitState({ status: "success", reference: data.reference ?? reference });
+   221→      form.reset(CONTACT_FORM_DEFAULTS);
+   222→      toast({
+   223→        title: "Enquiry sent",
+   224→        description: "Thank you — your project enquiry has been received.",
+   225→      });
+   226→    } catch (err) {
+   227→      const message =
+   228→        err instanceof Error
+   229→          ? err.message
+   230→          : "Something went wrong while sending your enquiry.";
+   231→      setSubmitState({ status: "error", message });
+   232→      toast({
+   233→        title: "Enquiry not sent",
+   234→        description: message,
+   235→        variant: "destructive",
+   236→      });
+   237→    }
+   238→  }
+   239→
+   240→  const selectClass =
+   241→    "h-11 rounded-[2px] border-input bg-white px-3 text-sm data-[placeholder]:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/60";
+   242→
+   243→  return (
+   244→    <section id="contact" className="bg-mist py-24 md:py-32">
+   245→      <div className="mx-auto max-w-6xl px-5 lg:px-8">
+   246→        <Reveal>
+   247→          <div className="relative overflow-hidden bg-navy px-6 py-10 text-white shadow-[0_30px_70px_-40px_rgba(13,26,44,0.55)] md:px-12 md:py-14">
+   248→            <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-gold">
+   249→              Enquiries
+   250→            </p>
+   251→            <h2 className="mt-4 max-w-2xl font-display text-3xl font-bold leading-[1.12] md:text-[2.75rem]">
+   252→              Ready to give your business the website it{" "}
+   253→              <em className="not-italic text-gold">deserves?</em>
+   254→            </h2>
+   255→            <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/70">
+   256→              Send the enquiry below and it lands directly in my inbox — read
+   257→              personally and answered properly. Prefer to chat first? Message
+   258→              me on WhatsApp, or tap the green bubble in the corner of this
+   259→              page.
+   260→            </p>
+   261→            <ul className="mt-7 flex flex-wrap gap-x-8 gap-y-3 text-[13px] font-semibold text-white/85">
+   262→              <li className="flex items-center gap-2">
+   263→                <span className="h-1.5 w-1.5 bg-gold" aria-hidden="true" />
+   264→                Fast, personal replies
+   265→              </li>
+   266→              <li className="flex items-center gap-2">
+   267→                <span className="h-1.5 w-1.5 bg-gold" aria-hidden="true" />
+   268→                Clear, itemised quote
+   269→              </li>
+   270→              <li className="flex items-center gap-2">
+   271→                <span className="h-1.5 w-1.5 bg-gold" aria-hidden="true" />
+   272→                No obligation
+   273→              </li>
+   274→            </ul>
+   275→          </div>
+   276→        </Reveal>
+   277→
+   278→        <div className="mt-14 grid items-start gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+   279→          <Reveal delay={0.08}>
+   280→            <ContactMethods />
+   281→          </Reveal>
+   282→
+   283→          <Reveal delay={0.14}>
+   284→            <div className="border border-line border-t-4 border-t-gold bg-white p-6 shadow-[0_28px_60px_-36px_rgba(13,26,44,0.4)] md:p-9">
+   285→              <div className="mb-7 flex items-center justify-between gap-4 border-b border-line pb-5">
+   286→                <h3 className="font-display text-xl font-bold text-navy">
+   287→                  Project enquiry
+   288→                </h3>
+   289→                <span className="text-[12px] font-medium text-steel">
+   290→                  Takes about two minutes
+   291→                </span>
+   292→              </div>
+   293→              {submitState.status === "success" ? (
+   294→                <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
+   295→                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold-tint">
+   296→                    <CheckCircle2 className="h-7 w-7 text-[#1faa53]" aria-hidden="true" />
+   297→                  </span>
+   298→                  <h3 className="mt-5 font-display text-2xl font-bold text-navy">
+   299→                    Enquiry received
+   300→                  </h3>
+   301→                  <p className="mt-3 max-w-sm text-sm leading-relaxed text-steel">
+   302→                    Thank you — your enquiry has been delivered to FABOM GLOBAL
+   303→                    {submitState.reference ? (
+   304→                      <>
+   305→                        {" "}with reference{" "}
+   306→                        <span className="font-mono font-semibold text-navy">
+   307→                          #{submitState.reference.slice(-8).toUpperCase()}
+   308→                        </span>
+   309→                      </>
+   310→                    ) : null}
+   311→                    . You will receive a personal reply at the email address you
+   312→                    provided.
+   313→                  </p>
+   314→                  <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+   315→                    <a
+   316→                      href={SITE.whatsappLink}
+   317→                      target="_blank"
+   318→                      rel="noopener noreferrer"
+   319→                      className="inline-flex h-11 items-center justify-center gap-2 bg-navy px-6 text-[13px] font-semibold text-white transition-colors hover:bg-navy-soft"
+   320→                    >
+   321→                      <WhatsAppIcon />
+   322→                      Continue on WhatsApp
+   323→                    </a>
+   324→                    <button
+   325→                      type="button"
+   326→                      onClick={() => setSubmitState({ status: "idle" })}
+   327→                      className="inline-flex h-11 items-center justify-center border border-line px-6 text-[13px] font-semibold text-navy transition-colors hover:border-gold"
+   328→                    >
+   329→                      Send another enquiry
+   330→                    </button>
+   331→                  </div>
+   332→                </div>
+   333→              ) : (
+   334→                <Form {...form}>
+   335→                  <form
+   336→                    onSubmit={form.handleSubmit(onSubmit)}
+   337→                    noValidate
+   338→                    className="space-y-5"
+   339→                  >
+   340→                    <div className="grid gap-5 sm:grid-cols-2">
+   341→                      <FormField
+   342→                        control={form.control}
+   343→                        name="fullName"
+   344→                        render={({ field }) => (
+   345→                          <FormItem>
+   346→                            <FormLabel className="text-[13px] font-semibold text-navy">
+   347→                              Full name <span className="text-destructive">*</span>
+   348→                            </FormLabel>
+   349→                            <FormControl>
+   350→                              <Input
+   351→                                placeholder="e.g. Adaeze Okafor"
+   352→                                autoComplete="name"
+   353→                                className="h-11 rounded-[2px]"
+   354→                                {...field}
+   355→                              />
+   356→                            </FormControl>
+   357→                            <FormMessage />
+   358→                          </FormItem>
+   359→                        )}
+   360→                      />
+   361→                      <FormField
+   362→                        control={form.control}
+   363→                        name="email"
+   364→                        render={({ field }) => (
+   365→                          <FormItem>
+   366→                            <FormLabel className="text-[13px] font-semibold text-navy">
+   367→                              Email address <span className="text-destructive">*</span>
+   368→                            </FormLabel>
+   369→                            <FormControl>
+   370→                              <Input
+   371→                                type="email"
+   372→                                placeholder="you@company.com"
+   373→                                autoComplete="email"
+   374→                                className="h-11 rounded-[2px]"
+   375→                                {...field}
+   376→                              />
+   377→                            </FormControl>
+   378→                            <FormMessage />
+   379→                          </FormItem>
+   380→                        )}
+   381→                      />
+   382→                    </div>
+   383→
+   384→                    <div className="grid gap-5 sm:grid-cols-2">
+   385→                      <FormField
+   386→                        control={form.control}
+   387→                        name="businessName"
+   388→                        render={({ field }) => (
+   389→                          <FormItem>
+   390→                            <FormLabel className="text-[13px] font-semibold text-navy">
+   391→                              Business name <span className="text-destructive">*</span>
+   392→                            </FormLabel>
+   393→                            <FormControl>
+   394→                              <Input
+   395→                                placeholder="Your business name"
+   396→                                autoComplete="organization"
+   397→                                className="h-11 rounded-[2px]"
+   398→                                {...field}
+   399→                              />
+   400→                            </FormControl>
+   401→                            <FormMessage />
+   402→                          </FormItem>
+   403→                        )}
+   404→                      />
+   405→                      <FormField
+   406→                        control={form.control}
+   407→                        name="currentWebsite"
+   408→                        render={({ field }) => (
+   409→                          <FormItem>
+   410→                            <FormLabel className="text-[13px] font-semibold text-navy">
+   411→                              Current website{" "}
+   412→                              <span className="font-normal text-steel">(optional)</span>
+   413→                            </FormLabel>
+   414→                            <FormControl>
+   415→                              <Input
+   416→                                placeholder="Leave empty if you don't have one yet"
+   417→                                className="h-11 rounded-[2px]"
+   418→                                {...field}
+   419→                              />
+   420→                            </FormControl>
+   421→                            <FormMessage />
+   422→                          </FormItem>
+   423→                        )}
+   424→                      />
+   425→                    </div>
+   426→
+   427→                    <div className="grid gap-5 sm:grid-cols-2">
+   428→                      <FormField
+   429→                        control={form.control}
+   430→                        name="businessType"
+   431→                        render={({ field }) => (
+   432→                          <FormItem>
+   433→                            <FormLabel className="text-[13px] font-semibold text-navy">
+   434→                              Type of business <span className="text-destructive">*</span>
+   435→                            </FormLabel>
+   436→                            <Select onValueChange={field.onChange} value={field.value}>
+   437→                              <FormControl>
+   438→                                <SelectTrigger className={selectClass}>
+   439→                                  <SelectValue placeholder="Select your industry" />
+   440→                                </SelectTrigger>
+   441→                              </FormControl>
+   442→                              <SelectContent>
+   443→                                {BUSINESS_TYPES.map((t) => (
+   444→                                  <SelectItem key={t} value={t} className="text-[13px]">
+   445→                                    {t}
+   446→                                  </SelectItem>
+   447→                                ))}
+   448→                              </SelectContent>
+   449→                            </Select>
+   450→                            <FormMessage />
+   451→                          </FormItem>
+   452→                        )}
+   453→                      />
+   454→                      <FormField
+   455→                        control={form.control}
+   456→                        name="serviceRequired"
+   457→                        render={({ field }) => (
+   458→                          <FormItem>
+   459→                            <FormLabel className="text-[13px] font-semibold text-navy">
+   460→                              Service required <span className="text-destructive">*</span>
+   461→                            </FormLabel>
+   462→                            <Select onValueChange={field.onChange} value={field.value}>
+   463→                              <FormControl>
+   464→                                <SelectTrigger className={selectClass}>
+   465→                                  <SelectValue placeholder="What do you need?" />
+   466→                                </SelectTrigger>
+   467→                              </FormControl>
+   468→                              <SelectContent>
+   469→                                {SERVICE_OPTIONS.map((s) => (
+   470→                                  <SelectItem key={s} value={s} className="text-[13px]">
+   471→                                    {s}
+   472→                                  </SelectItem>
+   473→                                ))}
+   474→                              </SelectContent>
+   475→                            </Select>
+   476→                            <FormMessage />
+   477→                          </FormItem>
+   478→                        )}
+   479→                      />
+   480→                    </div>
+   481→
+   482→                    <div className="grid gap-5 sm:grid-cols-2">
+   483→                      <FormField
+   484→                        control={form.control}
+   485→                        name="estimatedBudget"
+   486→                        render={({ field }) => (
+   487→                          <FormItem>
+   488→                            <FormLabel className="text-[13px] font-semibold text-navy">
+   489→                              Estimated budget{" "}
+   490→                              <span className="font-normal text-steel">(optional)</span>
+   491→                            </FormLabel>
+   492→                            <Select onValueChange={field.onChange} value={field.value}>
+   493→                              <FormControl>
+   494→                                <SelectTrigger className={selectClass}>
+   495→                                  <SelectValue placeholder="Helps me suggest the right scope" />
+   496→                                </SelectTrigger>
+   497→                              </FormControl>
+   498→                              <SelectContent>
+   499→                                {BUDGET_OPTIONS.map((b) => (
+   500→                                  <SelectItem key={b} value={b} className="text-[13px]">
+   501→                                    {b}
+   502→                                  </SelectItem>
+   503→                                ))}
+   504→                              </SelectContent>
+   505→                            </Select>
+   506→                            <FormMessage />
+   507→                          </FormItem>
+   508→                        )}
+   509→                      />
+   510→                      <FormField
+   511→                        control={form.control}
+   512→                        name="preferredTimeline"
+   513→                        render={({ field }) => (
+   514→                          <FormItem>
+   515→                            <FormLabel className="text-[13px] font-semibold text-navy">
+   516→                              Preferred timeline{" "}
+   517→                              <span className="font-normal text-steel">(optional)</span>
+   518→                            </FormLabel>
+   519→                            <Select onValueChange={field.onChange} value={field.value}>
+   520→                              <FormControl>
+   521→                                <SelectTrigger className={selectClass}>
+   522→                                  <SelectValue placeholder="When would you like to launch?" />
+   523→                                </SelectTrigger>
+   524→                              </FormControl>
+   525→                              <SelectContent>
+   526→                                {TIMELINE_OPTIONS.map((t) => (
+   527→                                  <SelectItem key={t} value={t} className="text-[13px]">
+   528→                                    {t}
+   529→                                  </SelectItem>
+   530→                                ))}
+   531→                              </SelectContent>
+   532→                            </Select>
+   533→                            <FormMessage />
+   534→                          </FormItem>
+   535→                        )}
+   536→                      />
+   537→                    </div>
+   538→
+   539→                    <FormField
+   540→                      control={form.control}
+   541→                      name="projectDescription"
+   542→                      render={({ field }) => (
+   543→                        <FormItem>
+   544→                          <FormLabel className="text-[13px] font-semibold text-navy">
+   545→                            Project description <span className="text-destructive">*</span>
+   546→                          </FormLabel>
+   547→                          <FormControl>
+   548→                            <Textarea
+   549→                              rows={5}
+   550→                              placeholder="Tell me about your business, what you want the website to achieve, any pages or features you have in mind, and anything else that matters."
+   551→                              className="min-h-[120px] rounded-[2px] resize-y"
+   552→                              {...field}
+   553→                            />
+   554→                          </FormControl>
+   555→                          <FormMessage />
+   556→                        </FormItem>
+   557→                      )}
+   558→                    />
+   559→
+   560→                    <FormField
+   561→                      control={form.control}
+   562→                      name="consent"
+   563→                      render={({ field }) => (
+   564→                        <FormItem>
+   565→                          <div className="flex items-start gap-3 rounded-[2px] border border-line bg-mist p-4">
+   566→                            <FormControl>
+   567→                              <Checkbox
+   568→                                checked={field.value}
+   569→                                onCheckedChange={(checked) =>
+   570→                                  field.onChange(checked === true)
+   571→                                }
+   572→                                className="mt-0.5"
+   573→                              />
+   574→                            </FormControl>
+   575→                            <FormLabel className="!mt-0 text-[12.5px] font-normal leading-relaxed text-steel">
+   576→                              I agree that FABOM GLOBAL may use the details in
+   577→                              this enquiry to reply to me about my project.
+   578→                              Details are never sold or shared with third
+   579→                              parties. <span className="text-destructive">*</span>
+   580→                            </FormLabel>
+   581→                          </div>
+   582→                          <FormMessage />
+   583→                        </FormItem>
+   584→                      )}
+   585→                    />
+   586→
+   587→                    {submitState.status === "error" ? (
+   588→                      <p
+   589→                        role="alert"
+   590→                        className="border border-destructive/30 bg-destructive/5 px-4 py-3 text-[13px] font-medium text-destructive"
+   591→                      >
+   592→                        {submitState.message} If the problem continues, please
+   593→                        email {SITE.email} or message me on WhatsApp.
+   594→                      </p>
+   595→                    ) : null}
+   596→
+   597→                    <div className="flex flex-col gap-3 border-t border-line pt-6 sm:flex-row">
+   598→                      <Button
+   599→                        type="submit"
+   600→                        disabled={submitState.status === "sending"}
+   601→                        className="h-12 flex-1 gap-2 rounded-[2px] bg-gold text-sm font-semibold text-navy hover:bg-[#b3905a] disabled:opacity-60 sm:flex-none sm:px-8"
+   602→                      >
+   603→                        {submitState.status === "sending" ? (
+   604→                          <>
+   605→                            <span
+   606→                              aria-hidden="true"
+   607→                              className="h-4 w-4 animate-spin rounded-full border-2 border-navy/30 border-t-navy"
+   608→                            />
+   609→                            Sending…
+   610→                          </>
+   611→                        ) : (
+   612→                          <>
+   613→                            <Send className="h-4 w-4" aria-hidden="true" />
+   614→                            Submit enquiry
+   615→                          </>
+   616→                        )}
+   617→                      </Button>
+   618→                      <a
+   619→                        href={SITE.whatsappLink}
+   620→                        target="_blank"
+   621→                        rel="noopener noreferrer"
+   622→                        className="inline-flex h-12 flex-1 items-center justify-center gap-2 border border-line bg-white px-6 text-sm font-semibold text-navy transition-colors hover:border-gold hover:bg-gold-tint sm:flex-none"
+   623→                      >
+   624→                        <WhatsAppIcon className="text-[#1faa53]" />
+   625→                        Or message me on WhatsApp
+   626→                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+   627→                      </a>
+   628→                    </div>
+   629→                    <p className="text-[11.5px] leading-relaxed text-steel">
+   630→                      Fields marked <span className="text-destructive">*</span> are
+   631→                      required. Your details are used only to respond to this
+   632→                      enquiry.
+   633→                    </p>
+   634→                  </form>
+   635→                </Form>
+   636→              )}
+   637→            </div>
+   638→          </Reveal>
+   639→        </div>
+   640→      </div>
+   641→    </section>
+   642→  );
+   643→}
+   644→

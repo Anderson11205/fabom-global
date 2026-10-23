@@ -35,6 +35,7 @@ import { contactFormSchema, type ContactFormValues } from "@/lib/contact-schema"
 import { CONTACT_FORM_DEFAULTS } from "@/lib/contact-schema";
 import { Reveal } from "./reveal";
 import { WhatsAppIcon } from "./whatsapp-icon";
+import { WhatsAppTrigger } from "./whatsapp-trigger";
 
 type SubmitState =
   | { status: "idle" }
@@ -106,11 +107,8 @@ function ContactMethods() {
         </span>
       </a>
 
-      <a
-        href={SITE.whatsappLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-start gap-4 border border-line bg-white p-5 transition-colors hover:border-[#1faa53]"
+      <WhatsAppTrigger
+        className="flex items-start gap-4 border border-line bg-white p-5 text-left transition-colors hover:border-[#1faa53]"
       >
         <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#1faa53] text-white">
           <WhatsAppIcon className="h-5 w-5" aria-hidden="true" />
@@ -123,10 +121,11 @@ function ContactMethods() {
             {SITE.whatsappDisplay}
           </span>
           <span className="mt-1 block text-[12.5px] text-steel">
-            Fastest way to reach me — opens a direct chat.
+            Fastest way to reach me — choose WhatsApp or WhatsApp Business and
+            the chat opens right in your app.
           </span>
         </span>
-      </a>
+      </WhatsAppTrigger>
 
       <div className="flex items-start gap-4 border border-line bg-white p-5">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-navy text-gold">
@@ -272,6 +271,19 @@ export function ContactSection() {
                 No obligation
               </li>
             </ul>
+            <div className="mt-9 flex flex-col gap-3.5 sm:flex-row">
+              <a
+                href="#enquiry-form"
+                className="inline-flex h-14 items-center justify-center gap-2.5 bg-gold px-8 text-[15px] font-bold text-navy shadow-[0_16px_34px_-16px_rgba(198,166,107,0.75)] transition-colors hover:bg-[#b3905a]"
+              >
+                Fill the enquiry form
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </a>
+              <WhatsAppTrigger className="inline-flex h-14 items-center justify-center gap-2.5 border border-white/25 px-8 text-[15px] font-semibold text-white transition-colors hover:border-gold hover:text-gold">
+                <WhatsAppIcon className="h-5 w-5 text-[#4fce5d]" aria-hidden="true" />
+                Chat on WhatsApp
+              </WhatsAppTrigger>
+            </div>
           </div>
         </Reveal>
 
@@ -281,7 +293,10 @@ export function ContactSection() {
           </Reveal>
 
           <Reveal delay={0.14}>
-            <div className="border border-line border-t-4 border-t-gold bg-white p-6 shadow-[0_28px_60px_-36px_rgba(13,26,44,0.4)] md:p-9">
+            <div
+              id="enquiry-form"
+              className="scroll-mt-28 border border-line border-t-4 border-t-gold bg-white p-6 shadow-[0_28px_60px_-36px_rgba(13,26,44,0.4)] md:p-9"
+            >
               <div className="mb-7 flex items-center justify-between gap-4 border-b border-line pb-5">
                 <h3 className="font-display text-xl font-bold text-navy">
                   Project enquiry
@@ -312,15 +327,10 @@ export function ContactSection() {
                     provided.
                   </p>
                   <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                    <a
-                      href={SITE.whatsappLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex h-11 items-center justify-center gap-2 bg-navy px-6 text-[13px] font-semibold text-white transition-colors hover:bg-navy-soft"
-                    >
+                    <WhatsAppTrigger className="inline-flex h-11 items-center justify-center gap-2 bg-navy px-6 text-[13px] font-semibold text-white transition-colors hover:bg-navy-soft">
                       <WhatsAppIcon />
                       Continue on WhatsApp
-                    </a>
+                    </WhatsAppTrigger>
                     <button
                       type="button"
                       onClick={() => setSubmitState({ status: "idle" })}
@@ -598,7 +608,7 @@ export function ContactSection() {
                       <Button
                         type="submit"
                         disabled={submitState.status === "sending"}
-                        className="h-12 flex-1 gap-2 rounded-[2px] bg-gold text-sm font-semibold text-navy hover:bg-[#b3905a] disabled:opacity-60 sm:flex-none sm:px-8"
+                        className="h-14 w-full gap-2 rounded-[2px] bg-gold text-[15px] font-bold text-navy shadow-[0_16px_34px_-16px_rgba(198,166,107,0.75)] hover:bg-[#b3905a] disabled:opacity-60 sm:w-auto sm:px-10"
                       >
                         {submitState.status === "sending" ? (
                           <>
@@ -615,16 +625,11 @@ export function ContactSection() {
                           </>
                         )}
                       </Button>
-                      <a
-                        href={SITE.whatsappLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex h-12 flex-1 items-center justify-center gap-2 border border-line bg-white px-6 text-sm font-semibold text-navy transition-colors hover:border-gold hover:bg-gold-tint sm:flex-none"
-                      >
+                      <WhatsAppTrigger className="inline-flex h-14 w-full items-center justify-center gap-2 border border-line bg-white px-6 text-sm font-semibold text-navy transition-colors hover:border-gold hover:bg-gold-tint sm:w-auto">
                         <WhatsAppIcon className="text-[#1faa53]" />
                         Or message me on WhatsApp
                         <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                      </a>
+                      </WhatsAppTrigger>
                     </div>
                     <p className="text-[11.5px] leading-relaxed text-steel">
                       Fields marked <span className="text-destructive">*</span> are
