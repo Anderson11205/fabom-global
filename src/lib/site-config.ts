@@ -27,7 +27,7 @@ export const SITE = {
    * Once it is set, it is shown automatically in the footer. Leave as null
    * until the site has been deployed.
    */
-  websiteUrl: null as string | null,
+  websiteUrl: "https://fabom-global.vercel.app" as string | null,
   heroHeadline: "Websites Designed to Help Your Business Stand Out.",
   heroSubtext:
     "I design professional, modern websites that help businesses present their brand, showcase their services and make it easier for customers to get in touch.",
