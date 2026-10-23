@@ -70,3 +70,6 @@ server.log
 # local working scripts + logs
 scripts/
 *.log
+
+# internal notes & local files
+worklog.md
