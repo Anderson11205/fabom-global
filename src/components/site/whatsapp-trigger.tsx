@@ -1,51 +1,86 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
+import { SITE } from "@/lib/site-config";
 
 /**
- * Event name used to ask the floating WhatsApp bubble to open the app
- * chooser (WhatsApp vs WhatsApp Business). Any WhatsApp CTA on the page —
- * navbar, footer, hero "Book Now", enquiry form — dispatches this event
- * instead of linking to wa.me directly.
- *
- * Why: wa.me links can land on a "download WhatsApp" page in some mobile
- * browsers. The chooser uses Android intent:// deep links that open the
- * installed app directly, with wa.me only as a silent fallback.
+ * Universal click-to-chat link. Works on every platform, even with JS off:
+ * iPhone jumps straight into the WhatsApp app (universal link) and desktop
+ * opens the WhatsApp chat page.
  */
-export const WHATSAPP_CHOOSER_EVENT = "fabom:open-whatsapp-chooser";
-
-export function openWhatsAppChooser() {
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent(WHATSAPP_CHOOSER_EVENT));
-  }
+function waUniversalLink(message?: string) {
+  return `https://wa.me/${SITE.whatsappNumber}?text=${encodeURIComponent(
+    message ?? SITE.whatsappMessage
+  )}`;
 }
 
 /**
- * Button that opens the WhatsApp app chooser on tap. Drop-in replacement
- * for the old wa.me <a> links — keeps the same visual classes.
+ * Android deep link. Fires the whatsapp:// scheme WITHOUT pinning an app
+ * package, so Android itself offers every installed handler — WhatsApp AND
+ * WhatsApp Business — and the visitor picks the one they want. If nothing
+ * can open it, the browser silently falls back to the universal wa.me page
+ * in the same tab. No new tabs, no blank screens.
+ */
+function waAndroidIntentLink(message?: string) {
+  const fallback = encodeURIComponent(waUniversalLink(message));
+  return `intent://send?phone=${SITE.whatsappNumber}&text=${encodeURIComponent(
+    message ?? SITE.whatsappMessage
+  )}#Intent;scheme=whatsapp;S.browser_fallback_url=${fallback};end`;
+}
+
+function handleClick(event: MouseEvent<HTMLAnchorElement>, message?: string) {
+  if (typeof navigator === "undefined") return;
+  const ua = navigator.userAgent;
+
+  // Non-Android (iPhone, desktop): the plain wa.me link behaves perfectly —
+  // iOS opens the installed app, desktop shows the chat page.
+  if (!/Android/i.test(ua)) return;
+
+  // In-app browsers / WebViews (e.g. opening the site from inside another
+  // app) cannot resolve intent:// links and would just show a blank page.
+  // Let them use the plain wa.me page — WhatsApp's own site handles the
+  // hand-off gracefully there.
+  if (/; wv\)/i.test(ua) || !/chrome|chromium|crios/i.test(ua)) return;
+
+  // Real Android browser (Chrome, Samsung Internet, etc.): skip the wa.me
+  // web page entirely and open the installed app directly — with the system
+  // picker when both WhatsApp and WhatsApp Business are present.
+  event.preventDefault();
+  window.location.href = waAndroidIntentLink(message);
+}
+
+/**
+ * WhatsApp CTA used everywhere on the site (navbar, hero "Book Now",
+ * contact section, footer, floating bubble). Renders a real <a> href so it
+ * behaves exactly like a normal WhatsApp button on any website: one tap
+ * opens the installed app, and phones with two WhatsApps get the system
+ * picker to choose which one. Never opens a blank or black tab.
  */
 export function WhatsAppTrigger({
   children,
   className,
   ariaLabel,
+  message,
   onClick,
 }: {
   children: ReactNode;
   className?: string;
   ariaLabel?: string;
+  /** Optional custom prefilled chat message. */
+  message?: string;
   onClick?: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={() => {
+    <a
+      href={waUniversalLink(message)}
+      onClick={(event) => {
         onClick?.();
-        openWhatsAppChooser();
+        handleClick(event, message);
       }}
       aria-label={ariaLabel}
       className={className}
     >
       {children}
-    </button>
+    </a>
   );
 }

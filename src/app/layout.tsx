@@ -21,8 +21,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "FABOM GLOBAL — Website Design & Development Services",
-    template: "%s | FABOM GLOBAL",
+    default: "Fabom Global Services | Website Design & Development",
+    template: "%s | Fabom Global Services",
   },
   description:
     "FABOM GLOBAL designs professional, modern websites that help businesses present their brand, showcase their services and make it easier for customers to get in touch. Business websites, redesigns, landing pages and e-commerce.",
@@ -42,17 +42,17 @@ export const metadata: Metadata = {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
   },
   openGraph: {
-    title: "FABOM GLOBAL — Websites Designed to Help Your Business Stand Out",
+    title: "Fabom Global Services — Websites Designed to Help Your Business Stand Out",
     description:
       "Professional, modern websites for real businesses. Business website design, redesigns, landing pages, e-commerce and ongoing support.",
     url: siteUrl,
-    siteName: "FABOM GLOBAL",
+    siteName: "Fabom Global Services",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FABOM GLOBAL — Website Design & Development Services",
+    title: "Fabom Global Services — Website Design & Development",
     description:
       "Professional, modern websites that help businesses stand out and win more enquiries.",
   },

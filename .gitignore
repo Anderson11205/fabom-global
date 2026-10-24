@@ -73,3 +73,8 @@ scripts/
 
 # internal notes & local files
 worklog.md
+
+# internal tool outputs & local db
+tool-results/
+/db/
+/3200
