@@ -84,6 +84,30 @@ async function submitToWeb3Forms(
   }
 }
 
+/**
+ * Safety net: if the enquiry could not be delivered by any email provider,
+ * hand the complete enquiry to WhatsApp with one tap so the message always
+ * reaches the business.
+ */
+function enquiryWhatsAppMessage(v: ContactFormValues | null): string {
+  if (!v) return SITE.whatsappMessage;
+  const lines: (string | null)[] = [
+    "Hello FABOM GLOBAL, I tried to send an enquiry through your website but it could not go through, so I am sending it here instead.",
+    "",
+    `Name: ${v.fullName}`,
+    `Email: ${v.email}`,
+    `Business: ${v.businessName}`,
+    v.currentWebsite ? `Current website: ${v.currentWebsite}` : null,
+    `Business type: ${v.businessType}`,
+    `Service required: ${v.serviceRequired}`,
+    v.estimatedBudget ? `Estimated budget: ${v.estimatedBudget}` : null,
+    v.preferredTimeline ? `Preferred timeline: ${v.preferredTimeline}` : null,
+    "",
+    `Project details: ${v.projectDescription}`,
+  ];
+  return lines.filter((line): line is string => line !== null).join("\n");
+}
+
 function ContactMethods() {
   return (
     <div className="space-y-4">
@@ -170,6 +194,7 @@ function ContactMethods() {
 
 export function ContactSection() {
   const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle" });
+  const [lastAttempt, setLastAttempt] = useState<ContactFormValues | null>(null);
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -179,6 +204,7 @@ export function ContactSection() {
 
   async function onSubmit(values: ContactFormValues) {
     setSubmitState({ status: "sending" });
+    setLastAttempt(values);
     const reference = `web-${Date.now().toString(36)}${Math.random()
       .toString(36)
       .slice(2, 8)}`;
@@ -595,13 +621,22 @@ export function ContactSection() {
                     />
 
                     {submitState.status === "error" ? (
-                      <p
+                      <div
                         role="alert"
-                        className="border border-destructive/30 bg-destructive/5 px-4 py-3 text-[13px] font-medium text-destructive"
+                        className="space-y-3 border border-destructive/30 bg-destructive/5 px-4 py-3"
                       >
-                        {submitState.message} If the problem continues, please
-                        email {SITE.email} or message me on WhatsApp.
-                      </p>
+                        <p className="text-[13px] font-medium text-destructive">
+                          {submitState.message} If the problem continues, please
+                          email {SITE.email}.
+                        </p>
+                        <WhatsAppTrigger
+                          message={enquiryWhatsAppMessage(lastAttempt)}
+                          className="inline-flex h-11 items-center justify-center gap-2 bg-[#1faa53] px-5 text-[13px] font-semibold text-white transition-colors hover:bg-[#178f45]"
+                        >
+                          <WhatsAppIcon className="h-4 w-4" aria-hidden="true" />
+                          Send this enquiry on WhatsApp instead
+                        </WhatsAppTrigger>
+                      </div>
                     ) : null}
 
                     <div className="flex flex-col gap-3 border-t border-line pt-6 sm:flex-row">
